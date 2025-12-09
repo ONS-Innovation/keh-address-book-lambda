@@ -5,12 +5,24 @@
     "**/.git/**",
     "**/.pnpm-lock.json",
     ".vscode",
-    "megalinter",
     "package-lock.json",
-    "report"
+    "megalinter-reports"
   ],
   "language": "en",
   "noConfigSearch": true,
-  "words": ["megalinter", "oxsecurity"],
+  "words": [
+    "megalinter",
+    "oxsecurity",
+    "CODEOWNERS",
+    "Pycache",
+    "Pytest",
+    "publicservices",
+    "pycache",
+    "stefanzweifel",
+    "terraformrc",
+    "tfstate",
+    "tfvars",
+    "venv"
+  ],
   "version": "0.2"
 }

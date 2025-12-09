@@ -15,6 +15,10 @@ on:
       - main
       - master
 
+# Restrict default token permissions at workflow level
+permissions:
+  read-all
+
 # Comment env block if you do not want to apply fixes
 env:
   # Apply linter fixes configuration
@@ -44,7 +48,6 @@ jobs:
     # issues, and post new Pull Requests; remove the ones you do not need
     permissions:
       contents: write
-      issues: write
       pull-requests: write
 
     steps:
