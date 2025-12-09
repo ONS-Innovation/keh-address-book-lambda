@@ -8,42 +8,17 @@ If you need any help, feel free to reach out to the development team.
 
 ## About this repository
 
-This repository is for the Digital Landscape tool.
-
-- We use [npm](https://www.npmjs.com/) for dependency management.
-- We use a Makefile for common development tasks.
 
 ## Structure
 
-This repository is structured as follows:
-
-```
-backend/
-frontend/
-concourse/
-mkdocs/
-terraform/
-testing/
-```
-
-| Path         | Description                                       |
-| ------------ | ------------------------------------------------- |
-| `backend/`   | The Node.js Express API.                          |
-| `frontend/`  | The React.js frontend application.                |
-| `concourse/` | Concourse CI pipeline configurations and scripts. |
-| `mkdocs/`    | Project documentation built with MkDocs.          |
-| `terraform/` | Terraform configurations for infrastructure.      |
-| `testing/`   | Backend (PyTest) and frontend (Playwright) tests. |
 
 ## Development
 
-For detailed instructions on setting up your development environment and running the project locally, please refer to the [Getting started](/README.md#getting-started) and [Running locally](/README.md#running-locally) sections in the `README.md` file.
+
 
 ## Documentation
 
-The project documentation is located in the `mkdocs/docs` directory. For instructions on how to build and serve the documentation locally, please refer to the [Documentation](/README.md#documentation) section in the `README.md` file.
 
-Documentation is written using Markdown.
 
 ## Commit Convention
 
@@ -108,9 +83,6 @@ e.g. `KEH-123-patch-1`
 
 ## Testing
 
-Backend tests are run with PyTest. Frontend tests are run with Playwright and AxeCore.
-
-For detailed instructions on running tests, please refer to the [Testing](/README.md#testing) section in the `README.md` file.
 
 ## Continuous Integration
 

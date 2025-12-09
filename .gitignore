@@ -1,31 +1,18 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-**/node_modules/
-/.pnp
-.pnp.js
+# Virtual Environment
+venv
+.venv
 
-# testing
-/coverage
+# Pycache
+__pycache__/
 
-# production
-*/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-/.vercel
-
+# MkDocs Build
+site/
 
 # Local .terraform directories
 **/.terraform/*
+
 .terraform.lock.hcl
 
 # .tfstate files
@@ -60,19 +47,20 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-site/*
-
-*/.env
 .env
 
-.pytest_cache
-terraform/service/highest_priority.txt
-terraform/service/highest_alb_listener_priority.txt
-*.pyc
+# Ignore the .DS_Store file created by macOS
+.DS_Store
 
-.vscode
+# Pytest Coverage Reports
+.coverage
 
-/venv
+# VS Code settings
+.vscode/
 
-/mkdocs/venv
-/mkdocs/site
+# Ignore MegaLinter reports
+megalinter-reports/
+
+# Ignore locally written data
+output/
+debug.log
