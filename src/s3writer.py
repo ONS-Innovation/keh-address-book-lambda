@@ -7,17 +7,12 @@ Typical usage example:
 """
 
 import os
-import boto3
 import json
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
+from typing import Tuple
 
-# FOR LAMBDA DEV
-# # Load environment variables from .env file
-# load_dotenv()
-
-# FOR LOCAL DEV
 # Load environment variables from .env file
-load_dotenv(find_dotenv())
+load_dotenv()
 
 
 class S3Writer:
@@ -34,21 +29,20 @@ class S3Writer:
     Methods:
         write_data_to_s3: Allows the program to connect to the S3 bucket and upload the JSON"""
 
-    def __init__(self, logger):
+    def __init__(self, logger, s3_client, bucket_name):
         """
         Initialises the S3Writer.
         """
         self.logger = logger
-        self.s3_client = boto3.client("s3")
+        self.s3_client = s3_client
 
         # Load bucket name from environment variable
-        self.bucket_name = os.getenv("S3_BUCKET_NAME")
+        self.bucket_name = bucket_name
         if not self.bucket_name:
             raise ValueError(
                 "S3_BUCKET_NAME environment variable is not set."
                 "Please create a .env file with S3_BUCKET_NAME=your-bucket-name"
             )
-
     def write_data_to_s3(self, file_to_update: str, data: str):
         """
         Writes the data to a specific filename within the specificed s3 bucket

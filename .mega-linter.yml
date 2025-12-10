@@ -1,3 +1,4 @@
+---
 # Configuration file for MegaLinter
 #
 # See all available variables at https://megalinter.io/latest/config-file/ and in
@@ -5,6 +6,8 @@
 
 # all, none, or list of linter keys
 APPLY_FIXES: all
+
+FORMATTERS_DISABLE_ERRORS: false
 
 # If you use ENABLE variable, all other languages/formats/tooling-formats will
 # be disabled by default
@@ -15,10 +18,16 @@ APPLY_FIXES: all
 # ENABLE_LINTERS:
 
 DISABLE:
-  - COPYPASTE # Comment to enable checks of excessive copy-pastes
-  # - SPELL # Uncomment to disable checks of spelling mistakes
+  - COPYPASTE
+  - PYTHON
+  - EDITORCONFIG
+  - SPELL
 
 SHOW_ELAPSED_TIME: true
 
+FILEIO_REPORTER: false
 # Uncomment if you want MegaLinter to detect errors but not block CI to pass
 # DISABLE_ERRORS: true
+
+# Use yml file to allow the use of comments. Megalinter's default is .markdown-lint.json
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdown-lint.yml

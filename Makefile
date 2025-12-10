@@ -34,7 +34,7 @@ test: ## Run pytest
 	@echo "Running tests..."
 	@poetry run pytest -q || (echo "Tests failed"; exit 1)
 
-.PHONY: megalint
+.PHONY: lint-test
 megalint: poetry-check ## Syntax check, lint, and test
 	@echo "Compiling for syntax errors..."
 	@poetry run python -m compileall -q src || (echo "Syntax errors found"; exit 1)

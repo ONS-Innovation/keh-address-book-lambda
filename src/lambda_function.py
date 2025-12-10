@@ -8,7 +8,7 @@ from logger import wrapped_logging
 import boto3
 from s3writer import S3Writer
 from github_services import GitHubServices 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 import os
 
 
@@ -31,36 +31,23 @@ def lambda_handler(event, context):
     org = os.getenv("GITHUB_ORG")
     secret_name = os.getenv("AWS_SECRET_NAME")
     app_client_id = os.getenv("GITHUB_APP_CLIENT_ID")
-
-    # Fail fast if required env vars are missing
-    missing = [name for name, val in {
-        "GITHUB_ORG": org,
-        "AWS_SECRET_NAME": secret_name,
-        "GITHUB_APP_CLIENT_ID": app_client_id,
-    }.items() if not val]
-    if missing:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
-                'message': 'Missing required environment variables',
-                'missing': missing
-            })
-        }
+    bucket_name = os.getenv("S3_BUCKET_NAME")
 
     try:
         secret_manager = boto3.client("secretsmanager")
+        s3_client = boto3.client("s3")
     except Exception as e:
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'message': 'Failed to initialize AWS Secrets Manager client',
+                'message': 'Failed to initialize AWS Secrets Manager or S3 client',
                 'error': str(e)
             })
         }
 
     logger = wrapped_logging(False)
     github_services = GitHubServices(org, logger, secret_manager, secret_name, app_client_id)
-    s3writer = S3Writer(logger)
+    s3writer = S3Writer(logger, s3_client, bucket_name)
 
     # Fetch data from GitHub
     try:
