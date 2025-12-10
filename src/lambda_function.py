@@ -66,8 +66,6 @@ if __name__ == "__main__":
     # Simple local runner to invoke the handler
     # Note: Requires AWS creds and env vars to be set
     try:
-        result = lambda_handler(event={}, context=None)
-        if result is not None:
-            print(json.dumps(result, indent=2))
+        lambda_handler(event={}, context=None)
     except Exception as e:
         print(f"Error running lambda_handler locally: {e}")
