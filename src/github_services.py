@@ -101,7 +101,7 @@ class GitHubServices:
         header = {"Authorization": f"Bearer {encoded_jwt}"}
         
         try:
-            response = requests.get(url=f"https://api.github.com/orgs/{self.org}/installation", headers=header)
+            response = requests.get(url=f"https://api.github.com/orgs/{self.org}/installation", headers=header, timeout=10)
 
             response.raise_for_status()
 
@@ -109,7 +109,7 @@ class GitHubServices:
             installation_id = installation_json["id"]
 
             # Get Access Token
-            response = requests.post(url=f"https://api.github.com/app/installations/{installation_id}/access_tokens", headers=header)
+            response = requests.post(url=f"https://api.github.com/app/installations/{installation_id}/access_tokens", headers=header, timeout=10)
             access_token = response.json()
             return (access_token["token"], access_token["expires_at"])
         
@@ -127,7 +127,7 @@ class GitHubServices:
             return err
         
 
-    def make_ql_request(self, query: str, params: dict) -> tuple[str, str, str] | dict:
+    def make_ql_request(self, query: str, params: dict) -> tuple[str, int, str] | dict:
         """
         Makes a GraphQL request to the GitHub API using the query and parameters above
 
@@ -146,7 +146,7 @@ class GitHubServices:
             'variables': params
         }
 
-        response = requests.post(url=self.api_url, json=json_request, headers=self.headers)
+        response = requests.post(url=self.api_url, json=json_request, headers=self.headers, timeout=20)
 
 
         if response.status_code != 200:

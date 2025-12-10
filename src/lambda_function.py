@@ -52,7 +52,7 @@ def lambda_handler(event, context):
 
     secret_manager = boto3.client("secretsmanager")
 
-    logger = wrapped_logging()
+    logger = wrapped_logging(False)
     github_services = GitHubServices(org, logger, secret_manager, secret_name, app_client_id)
     s3writer = S3Writer(logger)
 
