@@ -12,19 +12,6 @@ from dotenv import load_dotenv, find_dotenv
 import os
 
 
-# TODO: 
-# * 2. go through logic...
-# * 3. Ensure it works locally
-# * 4. Setup tests
-# * 5. Setup and Update mkdocs 
-
-# ! LOGIC:
-# * Set up logger
-# * Create S3writer class and the Github Service class (making sure to pass through the logger into init)
-# * retrieve the email and username data from Github service GraphQL API request (pagination, error handling)
-# * Format it into json, "'username': username, 'email': email"
-# * pass that into the S3 writer, to upload to file
-
 # FOR LAMBDA DEV
 # # Load environment variables from .env file
 # load_dotenv()
