@@ -16,8 +16,7 @@ on:
       - master
 
 # Restrict default token permissions at workflow level
-permissions:
-  read-all
+permissions: read-all
 
 # Comment env block if you do not want to apply fixes
 env:

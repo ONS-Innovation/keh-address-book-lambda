@@ -58,6 +58,9 @@ terraform.rc
 # VS Code settings
 .vscode/
 
+# Megalinter reports
+.megalinter-reports
+
 # Ignore locally written data
 output/
 debug.log
