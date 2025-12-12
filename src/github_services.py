@@ -1,16 +1,19 @@
-import requests
-import time
-import jwt
 from typing import Tuple, Any
 import github_api_toolkit
 
 
-
 class GitHubServices:
-    def __init__(self, org: str, logger: Any, secret_manager: Any, secret_name: str, app_client_id: str):
+    def __init__(
+        self,
+        org: str,
+        logger: Any,
+        secret_manager: Any,
+        secret_name: str,
+        app_client_id: str,
+    ):
         """
         Initialises the GitHubS Services Class
-        
+
         Args:
             org - Organisation name
             logger - The Lambda functions logger
@@ -18,7 +21,7 @@ class GitHubServices:
             secret_name - Secret name for AWS
             app_client_id - GitHub App Client ID
         """
-        
+
         self.org = org
         self.logger = logger
 
@@ -27,8 +30,9 @@ class GitHubServices:
 
         self.ql = github_api_toolkit.github_graphql_interface(access_token)
 
-        
-    def get_access_token(self, secret_manager: Any, secret_name: str, app_client_id: str) -> Tuple[str, str]:
+    def get_access_token(
+        self, secret_manager: Any, secret_name: str, app_client_id: str
+    ) -> Tuple[str, str]:
         """Gets the access token from the AWS Secret Manager.
 
         Args:
@@ -47,20 +51,21 @@ class GitHubServices:
         pem_contents = response.get("SecretString", "")
 
         if not pem_contents:
-            error_message = (
-                f"Secret {secret_name} not found in AWS Secret Manager. Please check your environment variables."
-            )
+            error_message = f"Secret {secret_name} not found in AWS Secret Manager. Please check your environment variables."
             self.logger.log_error(error_message)
             raise Exception(error_message)
 
-        token = github_api_toolkit.get_token_as_installation(self.org, pem_contents, app_client_id)
+        token = github_api_toolkit.get_token_as_installation(
+            self.org, pem_contents, app_client_id
+        )
 
         if not isinstance(token, tuple):
-            self.logger.log_error(f"Failed to retrieve GitHub App installation token: {token}")
+            self.logger.log_error(
+                f"Failed to retrieve GitHub App installation token: {token}"
+            )
             raise Exception(str(token))
 
         return token
-
 
     def get_all_user_details(self) -> tuple[dict, dict] | tuple:
         """
@@ -76,7 +81,7 @@ class GitHubServices:
         cursor = None
 
         while has_next_page:
-            query = '''
+            query = """
                 query ($org: String!, $cursor: String) {
                     organization(login: $org) {
                         membersWithRole(first: 100, after: $cursor) {
@@ -91,12 +96,9 @@ class GitHubServices:
                         }
                     }
                 }
-            '''
+            """
 
-            params = {
-                "org": self.org,
-                "cursor": cursor
-            }
+            params = {"org": self.org, "cursor": cursor}
 
             # Use instance-aware request (passes headers/token and has fallback)
             response_json = self.ql.make_ql_request(query, params).json()
@@ -104,22 +106,23 @@ class GitHubServices:
             org_data = response_json.get("data", {}).get("organization")
 
             if not org_data:
-                org_error_message = f"Organisation '{self.org} not found or inaccessible'"
+                org_error_message = (
+                    f"Organisation '{self.org} not found or inaccessible'"
+                )
                 self.logger.log_error(org_error_message)
                 return ("NotFound", org_error_message)
-        
+
             members_conn = org_data.get("membersWithRole", {})
             page_info = members_conn.get("pageInfo", {})
             has_next_page = page_info.get("hasNextPage", False)
             cursor = page_info.get("endCursor")
 
             for node in members_conn.get("nodes", []):
-                username = node.get('login')
-                emails = node.get('organizationVerifiedDomainEmails', [])
+                username = node.get("login")
+                emails = node.get("organizationVerifiedDomainEmails", [])
 
                 user_to_email[username] = emails
                 for address in emails:
-                    email_to_user[address] = username      
+                    email_to_user[address] = username
 
         return user_to_email, email_to_user
-    

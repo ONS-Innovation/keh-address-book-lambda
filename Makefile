@@ -10,29 +10,40 @@ clean: ## Clean the temporary files.
 	rm -rf .pytest_cache
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
+	rm -rf megalinter-reports
+	rm -rf site
 
 .PHONY: poetry-check
 poetry-check: ## Validate pyproject and lock
 	poetry check || true
 
-.PHONY: lint
-lint: ## Run available linters (ruff/flake8/pyflakes/mypy)
-	@echo "Running linters..."
-	@poetry run ruff check src || echo "ruff not installed; skipping"
-	@poetry run flake8 src || echo "flake8 not installed; skipping"
-	@poetry run pyflakes src || echo "pyflakes not installed; skipping"
-	@poetry run mypy src || echo "mypy not installed; skipping"
-
 .PHONY: format
-format: ## Run formatters (black/isort) if available
-	@echo "Running formatters..."
-	@poetry run black src || echo "black not installed; skipping"
-	@poetry run isort src || echo "isort not installed; skipping"
+format: ## Run formatters
+	poetry run black src
+	poetry run ruff check src --fix
+
+.PHONY: lint
+lint:
+	poetry run black --check src
+	poetry run ruff check src
+	make mypy
 
 .PHONY: test
 test: ## Run pytest
-	@echo "Running tests..."
-	@poetry run pytest -q || (echo "Tests failed"; exit 1)
+	poetry run pytest -n auto --cov=src --cov-report term-missing --cov-fail-under=95
+
+.PHONY: mypy
+mypy:  ## Run mypy.
+	poetry run mypy src
+
+.PHONY: install
+install:  ## Install the dependencies excluding dev.
+	poetry install --only main
+
+.PHONY: install-dev
+install-dev:  ## Install the dependencies including dev.
+	poetry install
+
 
 .PHONY: megalint
 megalint:  ## Run the mega-linter.
