@@ -7,7 +7,7 @@ import json
 from logger import wrapped_logging
 import boto3
 from s3writer import S3Writer
-from github_services import GitHubServices 
+from github_services import GitHubServices
 from dotenv import load_dotenv
 import os
 
@@ -19,15 +19,15 @@ load_dotenv()
 def lambda_handler(event, context):
     """
     AWS Lambda handler function for generating synthetic test data.
-    
+
     Args:
         event: Input event data (dict)
         context: Lambda context object
-    
+
     Returns:
         dict: Response with statusCode and generated data
     """
-    
+
     org = os.getenv("GITHUB_ORG")
     secret_name = os.getenv("AWS_SECRET_NAME")
     app_client_id = os.getenv("GITHUB_APP_CLIENT_ID")
@@ -38,15 +38,19 @@ def lambda_handler(event, context):
         s3_client = boto3.client("s3")
     except Exception as e:
         return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'message': 'Failed to initialize AWS Secrets Manager or S3 client',
-                'error': str(e)
-            })
+            "statusCode": 500,
+            "body": json.dumps(
+                {
+                    "message": "Failed to initialize AWS Secrets Manager or S3 client",
+                    "error": str(e),
+                }
+            ),
         }
 
     logger = wrapped_logging(False)
-    github_services = GitHubServices(org, logger, secret_manager, secret_name, app_client_id)
+    github_services = GitHubServices(
+        org, logger, secret_manager, secret_name, app_client_id
+    )
     s3writer = S3Writer(logger, s3_client, bucket_name)
 
     # Fetch data from GitHub
@@ -54,11 +58,10 @@ def lambda_handler(event, context):
         user_to_email, email_to_user = github_services.get_all_user_details()
     except Exception as e:
         return {
-            'statusCode': 502,
-            'body': json.dumps({
-                'message': 'Failed to fetch user details from GitHub',
-                'error': str(e)
-            })
+            "statusCode": 502,
+            "body": json.dumps(
+                {"message": "Failed to fetch user details from GitHub", "error": str(e)}
+            ),
         }
 
     # Serialize and write to S3
@@ -70,18 +73,20 @@ def lambda_handler(event, context):
         s3writer.write_data_to_s3(email_key, json.dumps(email_to_user, indent=2))
     except Exception as e:
         return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'message': 'Failed to write data to S3',
-                'error': str(e)
-            })
+            "statusCode": 500,
+            "body": json.dumps(
+                {"message": "Failed to write data to S3", "error": str(e)}
+            ),
         }
 
     return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'message': 'Successfully generated and stored address book data',
-        })
+        "statusCode": 200,
+        "body": json.dumps(
+            {
+                "message": "Successfully generated and stored address book data",
+                "user_entries": len(user_to_email),
+            }
+        ),
     }
 
 

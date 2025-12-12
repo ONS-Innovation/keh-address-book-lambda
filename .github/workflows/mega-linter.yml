@@ -60,6 +60,12 @@ jobs:
           # improve performance
           fetch-depth: 0
 
+      - name: Check PAT and Set APPLY_FIXES
+        run: |
+          if [ -z "${{ secrets.PAT }}" ]; then
+            echo "APPLY_FIXES=none" >> "$GITHUB_ENV"
+          fi
+
       # MegaLinter
       - name: MegaLinter
 

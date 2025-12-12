@@ -413,8 +413,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/ONS-Innovation/code-github-api-package.git"
-reference = "HEAD"
-resolved_reference = "ebf1db4767be6902c6500f032e1de5ce45726f0c"
+reference = "v1.0.0"
+resolved_reference = "3336b0cc5f8589e08853e1398dc925b0e6157207"
 
 [[package]]
 name = "idna"
@@ -960,4 +960,4 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "6d2ba920240c47648a90f1844d744b007cacf046646b55b4ef466e855de52361"
+content-hash = "a0a4a3a11b12eea7a5422a8b5422344f74b8a826e91ed74fba944effdc96849e"

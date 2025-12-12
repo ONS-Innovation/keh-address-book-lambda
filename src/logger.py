@@ -35,4 +35,3 @@ class wrapped_logging:
             message (str): The message to log.
         """
         self.logger.warning(message)
-        

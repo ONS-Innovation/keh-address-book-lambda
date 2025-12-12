@@ -25,7 +25,7 @@ class GitHubServices:
         token = self.get_access_token(secret_manager, secret_name, app_client_id)
         access_token = token[0] if isinstance(token, tuple) else token
 
-        self.toolkit_make_ql_request = github_api_toolkit.github_graphql_interface(access_token)
+        self.ql = github_api_toolkit.github_graphql_interface(access_token)
 
         
     def get_access_token(self, secret_manager: Any, secret_name: str, app_client_id: str) -> Tuple[str, str]:
@@ -99,13 +99,13 @@ class GitHubServices:
             }
 
             # Use instance-aware request (passes headers/token and has fallback)
-            response_json = self.toolkit_make_ql_request.make_ql_request(query, params).json()
+            response_json = self.ql.make_ql_request(query, params).json()
 
             org_data = response_json.get("data", {}).get("organization")
 
             if not org_data:
                 org_error_message = f"Organisation '{self.org} not found or inaccessible'"
-                self.logger.log_warning(org_error_message)
+                self.logger.log_error(org_error_message)
                 return ("NotFound", org_error_message)
         
             members_conn = org_data.get("membersWithRole", {})

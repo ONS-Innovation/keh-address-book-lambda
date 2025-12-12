@@ -10,7 +10,7 @@ dependencies = [
 	"python-dotenv>=1.0.0,<2.0.0",
 	"requests (>=2.32.5,<3.0.0)",
 	"jwt (>=1.4.0,<2.0.0)",
-	"github-api-toolkit @ git+https://github.com/ONS-Innovation/code-github-api-package.git"
+	"github-api-toolkit @ git+https://github.com/ONS-Innovation/code-github-api-package.git@v1.0.0"
 ]
 
 [tool.poetry]
