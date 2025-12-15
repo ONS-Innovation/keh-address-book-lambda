@@ -9,8 +9,6 @@ import boto3
 from s3writer import S3Writer
 from github_services import GitHubServices
 from dotenv import load_dotenv
-from github_services import GitHubServices
-from dotenv import load_dotenv
 import os
 
 
