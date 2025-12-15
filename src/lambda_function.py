@@ -14,18 +14,15 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
-load_dotenv()
 
 
 def lambda_handler(event, context):
     """
     AWS Lambda handler function for generating synthetic test data.
 
-
     Args:
         event: Input event data (dict)
         context: Lambda context object
-
 
     Returns:
         dict: Response with statusCode and generated data
@@ -58,12 +55,29 @@ def lambda_handler(event, context):
 
     # Fetch data from GitHub
     try:
-        user_to_email, email_to_user = github_services.get_all_user_details()
+        response = github_services.get_all_user_details()
+
+        if response[0] == "NotFound":
+            return {
+                "statusCode": 404,
+                "body": json.dumps(
+                    {
+                        "message": "Organsation not found",
+                        "error": str(response[1]),
+                    }
+                ),
+            }
+        else:
+            user_to_email, email_to_user = response
+
     except Exception as e:
         return {
-            "statusCode": 502,
+            "statusCode": 500,
             "body": json.dumps(
-                {"message": "Failed to fetch user details from GitHub", "error": str(e)}
+                {
+                    "message": "Missing required environment variables",
+                    "error": str(e),
+                }
             ),
         }
 
