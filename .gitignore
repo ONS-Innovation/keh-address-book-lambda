@@ -59,7 +59,7 @@ terraform.rc
 .vscode/
 
 # Megalinter reports
-.megalinter-reports
+.megalinter-reports/
 
 # Ignore locally written data
 output/

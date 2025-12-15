@@ -34,7 +34,7 @@ test: ## Run pytest
 
 .PHONY: mypy
 mypy:  ## Run mypy.
-	poetry run mypy src
+	poetry run mypy --config-file mypy.ini src
 
 .PHONY: install
 install:  ## Install the dependencies excluding dev.
