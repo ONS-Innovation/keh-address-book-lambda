@@ -44,7 +44,9 @@ class S3Writer:
                 "Please create a .env file with S3_BUCKET_NAME=your-bucket-name"
             )
 
-    def write_data_to_s3(self, file_to_update: str | None, data: dict[str, Any] | None):
+    def write_data_to_s3(
+        self, file_to_update: str | None, data: dict[str, Any] | str | None
+    ):
         """
         Writes the data to a specific filename within the specificed s3 bucket
 
@@ -62,7 +64,9 @@ class S3Writer:
 
         # Convert dict to JSON string if needed
         if isinstance(data, dict):
-            data = json.dumps(data, indent=2)
+            data_str = json.dumps(data, indent=2)
+        else:
+            data_str = data
 
         # Upload the file to S3 within the bucket directly
         key = f"{file_to_update}"
@@ -72,7 +76,11 @@ class S3Writer:
             self.s3_client.put_object(
                 Bucket=self.bucket_name,
                 Key=key,
-                Body=data.encode("utf-8"),
+                Body=(
+                    data_str.encode("utf-8")
+                    if isinstance(data_str, str)
+                    else json.dumps(data_str).encode("utf-8")
+                ),
                 ContentType="application/json",
             )
 
