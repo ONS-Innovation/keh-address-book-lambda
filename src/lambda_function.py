@@ -9,10 +9,13 @@ import boto3
 from s3writer import S3Writer
 from github_services import GitHubServices
 from dotenv import load_dotenv
+from github_services import GitHubServices
+from dotenv import load_dotenv
 import os
 
 
 # Load environment variables from .env file
+load_dotenv()
 load_dotenv()
 
 
@@ -20,9 +23,11 @@ def lambda_handler(event, context):
     """
     AWS Lambda handler function for generating synthetic test data.
 
+
     Args:
         event: Input event data (dict)
         context: Lambda context object
+
 
     Returns:
         dict: Response with statusCode and generated data
