@@ -7,43 +7,23 @@ Please take a moment to review this document before submitting your first pull r
 If you need any help, feel free to reach out to the development team.
 
 ## About this repository
-
-This repository is for the Digital Landscape tool.
-
-- We use [npm](https://www.npmjs.com/) for dependency management.
-- We use a Makefile for common development tasks.
+TODO: 
+- Purpose of lambda
+- How it is used in wider ONS (digiland) 
 
 ## Structure
-
-This repository is structured as follows:
-
-```
-backend/
-frontend/
-concourse/
-mkdocs/
-terraform/
-testing/
-```
-
-| Path         | Description                                       |
-| ------------ | ------------------------------------------------- |
-| `backend/`   | The Node.js Express API.                          |
-| `frontend/`  | The React.js frontend application.                |
-| `concourse/` | Concourse CI pipeline configurations and scripts. |
-| `mkdocs/`    | Project documentation built with MkDocs.          |
-| `terraform/` | Terraform configurations for infrastructure.      |
-| `testing/`   | Backend (PyTest) and frontend (Playwright) tests. |
+TODO: 
+- Structure of the mkdocs
 
 ## Development
-
-For detailed instructions on setting up your development environment and running the project locally, please refer to the [Getting started](/README.md#getting-started) and [Running locally](/README.md#running-locally) sections in the `README.md` file.
+TODO:
+- "How can I help to develop in this"
 
 ## Documentation
+TODO:
+- Where is documentation
+- How is documentation written
 
-The project documentation is located in the `mkdocs/docs` directory. For instructions on how to build and serve the documentation locally, please refer to the [Documentation](/README.md#documentation) section in the `README.md` file.
-
-Documentation is written using Markdown.
 
 ## Commit Convention
 
@@ -107,10 +87,9 @@ TICKET-NUMBER-PATCH-NUMBER
 e.g. `KEH-123-patch-1`
 
 ## Testing
+TODO:
+- How is testing done?
 
-Backend tests are run with PyTest. Frontend tests are run with Playwright and AxeCore.
-
-For detailed instructions on running tests, please refer to the [Testing](/README.md#testing) section in the `README.md` file.
 
 ## Continuous Integration
 
