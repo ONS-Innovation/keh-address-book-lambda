@@ -12,7 +12,7 @@ class GitHubServices:
         app_client_id: str,
     ):
         """
-        Initialises the GitHubS Services Class
+        Initialises the GitHub Services Class
 
         Args:
             org - Organisation name
@@ -26,7 +26,15 @@ class GitHubServices:
         self.logger = logger
 
         token = self.get_access_token(secret_manager, secret_name, app_client_id)
-        access_token = token[0] if isinstance(token, tuple) else token
+
+        # Ensure we have a valid token tuple before proceeding
+        if not isinstance(token, tuple):
+            self.logger.log_error(
+                f"Failed to retrieve GitHub App installation token: {token}"
+            )
+            raise Exception(str(token))
+
+        access_token = token[0]
 
         self.ql = github_api_toolkit.github_graphql_interface(access_token)
 
