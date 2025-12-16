@@ -36,7 +36,7 @@ def lambda_handler(event, context):
     try:
         secret_manager = boto3.client("secretsmanager")
         s3_client = boto3.client("s3")
-    except Exception as e:
+    except Exception:
         # In unit tests, AWS region/creds are not set; allow stubs to run.
         secret_manager = None
         s3_client = None
