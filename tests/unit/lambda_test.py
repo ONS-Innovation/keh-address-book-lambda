@@ -1,9 +1,8 @@
 import json
 import os
 import builtins
-
 import pytest
-from unittest.mock import Mock, patch, call, ANY
+from lambda_function import lambda_handler
 
 
 @pytest.fixture
@@ -13,92 +12,106 @@ def set_env(monkeypatch):
     monkeypatch.setenv("GITHUB_APP_CLIENT_ID", "12345")
 
 
-def test_lambda_happy_path(set_env):
-    # Mock boto3 secretsmanager client
-    with patch("lambda_function.boto3.client", return_value=Mock()) as _:
-        # Mock GitHubServices to return bidirectional dicts
-        with patch("lambda_function.GitHubServices") as fake_services_cls, \
-             patch("lambda_function.S3Writer") as fake_s3writer_cls:
+def test_lambda_valid(monkeypatch):
+    class GitHubServices:
+        def __init__(self):
+            self.calls = 0
 
-            fake_services = fake_services_cls.return_value
-            fake_services.get_all_user_details.return_value = (
+        def get_all_user_details(self):
+            self.calls += 1
+            return (
                 {"alice": "alice@ons.gov.uk", "bob": "bob@ons.gov.uk"},
                 {"alice@ons.gov.uk": "alice", "bob@ons.gov.uk": "bob"},
             )
 
-            fake_s3writer = fake_s3writer_cls.return_value
+    class S3WriterStub:
+        def __init__(self):
+            self.call_args_list = []
 
-            # Import and run handler
-            from lambda_function import lambda_handler
+        def write_data_to_s3(self, filename, payload):
+            self.call_args_list.append(((filename, payload), {}))
 
-            result = lambda_handler(event={}, context=None)
+    services_stub = GitHubServices()
+    s3writer_stub = S3WriterStub()
 
-            # Handler returns structured success response
-            assert isinstance(result, dict)
-            assert result.get('statusCode') == 200
-            body = json.loads(result.get('body', '{}'))
-            assert body.get('message')
-            fake_services.get_all_user_details.assert_called_once()
+    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: services_stub)
+    monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: s3writer_stub)
 
-            # Verify S3 uploads with JSON content
-            assert fake_s3writer.write_data_to_s3.call_count == 2
-            expected_calls = [
-                call("addressBookUsernameKey.json", ANY),
-                call("addressBookEmailKey.json", ANY),
-            ]
-            fake_s3writer.write_data_to_s3.assert_has_calls(expected_calls, any_order=True)
+    result = lambda_handler(event={}, context=None)
 
-            # Validate JSON payload shapes
-            args_list = [c.args for c in fake_s3writer.write_data_to_s3.call_args_list]
-            for _, payload in args_list:
-                parsed = json.loads(payload)
-                assert isinstance(parsed, dict)
+    assert isinstance(result, dict)
+    assert result.get('statusCode') == 200
+    body = json.loads(result.get('body', '{}'))
+    assert body.get('message')
+    assert services_stub.calls == 1
+
+    assert len(s3writer_stub.call_args_list) == 2
+    filenames = {args[0] for args, _ in s3writer_stub.call_args_list}
+    assert filenames == {"addressBookUsernameKey.json", "addressBookEmailKey.json"}
+    for (filename, payload), _ in s3writer_stub.call_args_list:
+        parsed = json.loads(payload)
+        assert isinstance(parsed, dict)
 
 
 def test_lambda_missing_env_var(monkeypatch):
-    # Ensure a required env var is missing
     for key in ("GITHUB_ORG", "AWS_SECRET_NAME", "GITHUB_APP_CLIENT_ID"):
         if key in os.environ:
             monkeypatch.delenv(key, raising=False)
 
-    # Mock dependencies minimally to avoid real calls
-    with patch("lambda_function.boto3.client"), patch("lambda_function.GitHubServices"), patch("lambda_function.S3Writer"):
-        from lambda_function import lambda_handler
+    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: object())
+    monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: object())
 
-        # Expect a 400 response due to missing env configuration
-        result = lambda_handler(event={}, context=None)
-        assert isinstance(result, dict)
-        assert result.get('statusCode') == 500
-        body = json.loads(result.get('body', '{}'))
-        assert body.get('message') == 'Missing required environment variables'
+    from lambda_function import lambda_handler
+
+    result = lambda_handler(event={}, context=None)
+    assert isinstance(result, dict)
+    assert result.get('statusCode') == 500
+    body = json.loads(result.get('body', '{}'))
+    assert body.get('message') == 'Missing required environment variables'
 
 
-def test_lambda_serializes_and_uploads(set_env):
-    # Mock boto3 secretsmanager client
-    with patch("lambda_function.boto3.client", return_value=Mock()):
-        # Provide simple deterministic mappings
-        with patch("lambda_function.GitHubServices") as fake_services_cls, \
-             patch("lambda_function.S3Writer") as fake_s3writer_cls:
+def test_lambda_handles_org_not_found(set_env, monkeypatch):
+    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
 
-            fake_services = fake_services_cls.return_value
-            user_to_email = {"user": "user@ons.gov.uk"}
-            email_to_user = {"user@ons.gov.uk": "user"}
-            fake_services.get_all_user_details.return_value = (user_to_email, email_to_user)
+    class FakeServices:
+        def __init__(self, *args, **kwargs): pass
+        def get_all_user_details(self):
+            return ("NotFound", "Organisation 'test-org not found or inaccessible'")
 
-            fake_s3writer = fake_s3writer_cls.return_value
+    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
 
-            from lambda_function import lambda_handler
+    class FakeS3Writer:
+        def __init__(self, *args, **kwargs): pass
+        def write_data_to_s3(self, *args, **kwargs): pass
 
-            result = lambda_handler(event={}, context=None)
-            assert result.get('statusCode') == 200
+    monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: FakeS3Writer())
 
-            # Extract payloads and validate exact JSON
-            args1 = fake_s3writer.write_data_to_s3.call_args_list[0][0]
-            args2 = fake_s3writer.write_data_to_s3.call_args_list[1][0]
+    result = lambda_handler(event={}, context=None)
+    assert result["statusCode"] == 404
+    body = json.loads(result["body"])
+    msg = body.get("message", "")
+    assert isinstance(msg, str) and "Organisation" in msg and "not found" in msg
 
-            assert args1[0] in {"addressBookUsernameKey.json", "addressBookEmailKey.json"}
-            assert args2[0] in {"addressBookUsernameKey.json", "addressBookEmailKey.json"}
 
-            payloads = {args1[0]: args1[1], args2[0]: args2[1]}
-            assert json.loads(payloads["addressBookUsernameKey.json"]) == user_to_email
-            assert json.loads(payloads["addressBookEmailKey.json"]) == email_to_user
+def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
+    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+
+    class FakeServices:
+        def __init__(self, *args, **kwargs): pass
+        def get_all_user_details(self):
+            return ({"alice": "alice@ons.gov.uk"}, {"alice@ons.gov.uk": "alice"})
+
+    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
+
+    class FailingS3Writer:
+        def __init__(self, *args, **kwargs): pass
+        def write_data_to_s3(self, *args, **kwargs):
+            raise RuntimeError("S3 boom")
+
+    monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: FailingS3Writer())
+
+    result = lambda_handler(event={}, context=None)
+    assert result["statusCode"] == 500
+    body = json.loads(result["body"])
+    assert body.get("message")

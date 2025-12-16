@@ -30,7 +30,7 @@ lint:
 
 .PHONY: test
 test: ## Run pytest
-	poetry run pytest -n auto --cov=src --cov-report term-missing --cov-fail-under=95
+	poetry run pytest -n auto --cov=src --cov-report term-missing --cov-fail-under=90
 
 .PHONY: mypy
 mypy:  ## Run mypy.

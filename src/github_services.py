@@ -129,6 +129,16 @@ class GitHubServices:
                 username = node.get("login")
                 emails = node.get("organizationVerifiedDomainEmails", [])
 
+                if not username:
+                    self.logger.log_warning("Skipping member with empty username")
+                    continue
+
+                if emails == [] or not emails:
+                    self.logger.log_warning(
+                        f"Skipping member '{username}' with no verified domain emails"
+                    )
+                    continue
+
                 user_to_email[username] = emails
                 for address in emails:
                     email_to_user[address] = username

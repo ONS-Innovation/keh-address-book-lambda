@@ -57,7 +57,7 @@ class S3Writer:
 
         # Ensure that the arguments are not None
         if file_to_update is None or data is None:
-            self.logger.warning(
+            self.logger.log_warning(
                 f"filename or data is empty. filename: {'empty' if file_to_update is None else 'filled'}, data: {'empty' if data is None else 'filled'}"
             )
             return

@@ -62,7 +62,7 @@ def lambda_handler(event, context):
                 "statusCode": 404,
                 "body": json.dumps(
                     {
-                        "message": "Organsation not found",
+                        "message": "Organisation not found",
                         "error": str(response[1]),
                     }
                 ),
