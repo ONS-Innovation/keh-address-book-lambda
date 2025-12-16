@@ -8,14 +8,10 @@ Typical usage example:
 
 import json
 from typing import Any
+from dotenv import load_dotenv
 
-# Optional dotenv: safe to skip in test/CI environments
-try:
-    from dotenv import load_dotenv  # type: ignore
-
-    load_dotenv()
-except Exception:  # pragma: no cover
-    pass
+# Load environment variables from .env file
+load_dotenv()
 
 
 class S3Writer:

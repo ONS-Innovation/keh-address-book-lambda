@@ -1,26 +1,5 @@
 from typing import Tuple, Any
-
-# Optional import: provide a lightweight fallback so tests can monkeypatch
-try:
-    import github_api_toolkit  # type: ignore
-except Exception:  # pragma: no cover - only used when dep missing
-
-    class _ToolkitFallback:  # minimal surface for tests to patch
-        def get_token_as_installation(self, *args, **kwargs):
-            return ("", "")
-
-        def github_graphql_interface(self, token):
-            class _QL:
-                def make_ql_request(self, *a, **k):
-                    class _Resp:
-                        def json(self):
-                            return {}
-
-                    return _Resp()
-
-            return _QL()
-
-    github_api_toolkit = _ToolkitFallback()  # type: ignore
+import github_api_toolkit
 
 
 class GitHubServices:
