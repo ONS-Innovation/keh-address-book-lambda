@@ -4,6 +4,7 @@ from typing import Tuple, Any
 try:
     import github_api_toolkit  # type: ignore
 except Exception:  # pragma: no cover - only used when dep missing
+
     class _ToolkitFallback:  # minimal surface for tests to patch
         def get_token_as_installation(self, *args, **kwargs):
             return ("", "")

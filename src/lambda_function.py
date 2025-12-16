@@ -21,6 +21,7 @@ except Exception:  # pragma: no cover
 try:
     import boto3  # type: ignore
 except Exception:  # pragma: no cover - only when boto3 missing
+
     class _Boto3Shim:
         def client(self, name, *args, **kwargs):
             # Return a dummy object so monkeypatching or stubs can replace usage
