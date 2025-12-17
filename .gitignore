@@ -64,3 +64,6 @@ terraform.rc
 # Ignore locally written data
 output/
 debug.log
+
+# Docker
+docker.env
