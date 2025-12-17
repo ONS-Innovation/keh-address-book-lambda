@@ -4,15 +4,20 @@ from fixtures import logger_spy, secret_manager_valid, secret_manager_empty
 
 
 def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
+    """Ensures valid GitHubServices setup succeeds and logs nothing."""
 
     def fake_get_token_as_installation(org, pem, app_client_id):
+        """Return fake token."""
+
         assert org == "test-org"
         assert pem == "FAKE_PEM_CONTENT"
         assert app_client_id == "12345"
         return ("token123", "inst1")
     
+    
     class FakeResponse:
         def json(self):
+            """Fake response."""
             return {
                 "data": {
                     "organization": {
@@ -26,7 +31,9 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeQL:
         def make_ql_request(self, query, params):
+            """Recreate GraphQL request; returns FakeResponse."""
             return FakeResponse()
+
 
     monkeypatch.setattr(github_services.github_api_toolkit, "get_token_as_installation", fake_get_token_as_installation)
     monkeypatch.setattr(github_services.github_api_toolkit, "github_graphql_interface", lambda token: FakeQL(),)
@@ -44,6 +51,7 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
 
 
 def test_missing_secret(logger_spy, secret_manager_empty):
+    """Raises when secret is missing and logs an error."""
 
     with pytest.raises(Exception) as exc:
         _ = github_services.GitHubServices(
@@ -62,8 +70,10 @@ def test_missing_secret(logger_spy, secret_manager_empty):
 
 
 def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
+    """Handles invalid token retrieval by raising and logging."""
 
     def fake_bad_token(org, pem, app_client_id):
+        """Return failure to recreate a bad token."""
         return "failure"
 
     monkeypatch.setattr(
@@ -86,6 +96,8 @@ def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
 
 
 def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
+    """Paginates members correctly."""
+
     monkeypatch.setattr(
         github_services.github_api_toolkit,
         "get_token_as_installation",
@@ -95,6 +107,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
     calls = {"count": 0, "params": []}
 
     class FakeResponse1:
+        """First page payload with pagination cursor."""
         def json(self):
             return {
                 "data": {
@@ -110,6 +123,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
             }
 
     class FakeResponse2:
+        """Second page payload; end of pagination."""
         def json(self):
             return {
                 "data": {
@@ -126,6 +140,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeQL:
         def make_ql_request(self, query, params):
+            """Recreate paginated GraphQL; track calls and params."""
             calls["count"] += 1
             calls["params"].append(params)
             return FakeResponse1() if calls["count"] == 1 else FakeResponse2()
@@ -158,6 +173,8 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
 
 
 def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
+    """Skips members with no verified domain emails."""
+
     monkeypatch.setattr(
         github_services.github_api_toolkit,
         "get_token_as_installation",
@@ -166,6 +183,7 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeResponse:
         def json(self):
+            """Fake response with empty email list."""
             return {
                 "data": {
                     "organization": {
@@ -181,6 +199,7 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeQL:
         def make_ql_request(self, query, params):
+            """Recreate GraphQL request; returns FakeResponse."""
             return FakeResponse()
 
     monkeypatch.setattr(
@@ -206,6 +225,8 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
 
 
 def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
+    """Skips members with empty usernames."""
+
     monkeypatch.setattr(
         github_services.github_api_toolkit,
         "get_token_as_installation",
@@ -213,6 +234,7 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     )
 
     class FakeResponse:
+        """Fake response payload lacking username."""
         def json(self):
             return {
                 "data": {
@@ -229,6 +251,7 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeQL:
         def make_ql_request(self, query, params):
+            """Recreate GraphQL request; returns FakeResponse."""
             return FakeResponse()
 
     monkeypatch.setattr(
@@ -254,6 +277,8 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     
 
 def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_valid):
+    """Handles missing organisation in GraphQL response."""
+    
     monkeypatch.setattr(
         github_services.github_api_toolkit,
         "get_token_as_installation",
@@ -262,10 +287,12 @@ def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_val
 
     class FakeResponse:
         def json(self):
+            """Fake response with null organisation."""
             return {"data": {"organization": None}}
 
     class FakeQL:
         def make_ql_request(self, query, params):
+            """Recreate GraphQL request; returns FakeResponse."""
             return FakeResponse()
 
     monkeypatch.setattr(

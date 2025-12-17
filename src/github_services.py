@@ -14,6 +14,9 @@ class GitHubServices:
         """
         Initialises the GitHub Services Class
 
+        Raises:
+            Exception: if GitHub app installation token is not found
+
         Args:
             org - Organisation name
             logger - The Lambda functions logger
@@ -50,6 +53,7 @@ class GitHubServices:
 
         Raises:
             Exception: If the secret is not found in the Secret Manager.
+            Exception: if GitHub app installation token is not found
 
         Returns:
             str: GitHub token.

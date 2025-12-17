@@ -7,11 +7,14 @@ from fixtures import set_env
 
 
 def test_lambda_valid(monkeypatch):
+    """Processes a valid event, writes to S3, returns 200."""
     class GitHubServices:
+        """Stub service returning user mappings."""
         def __init__(self):
             self.calls = 0
 
         def get_all_user_details(self):
+            """Return stubbed user-to-email and email-to-user maps."""
             self.calls += 1
             return (
                 {"alice": "alice@ons.gov.uk", "bob": "bob@ons.gov.uk"},
@@ -19,10 +22,12 @@ def test_lambda_valid(monkeypatch):
             )
 
     class S3WriterStub:
+        """Capture S3 writes for verification."""
         def __init__(self):
             self.call_args_list = []
 
         def write_data_to_s3(self, filename, payload):
+            """Record filename and payload as a captured call."""
             self.call_args_list.append(((filename, payload), {}))
 
     services_stub = GitHubServices()
@@ -48,6 +53,7 @@ def test_lambda_valid(monkeypatch):
 
 
 def test_lambda_missing_env_var(monkeypatch):
+    """Returns 500 when required environment variables are missing."""
     for key in ("GITHUB_ORG", "AWS_SECRET_NAME", "GITHUB_APP_CLIENT_ID"):
         if key in os.environ:
             monkeypatch.delenv(key, raising=False)
@@ -66,9 +72,11 @@ def test_lambda_missing_env_var(monkeypatch):
 
 
 def test_lambda_handles_org_not_found(set_env, monkeypatch):
+    """Returns 404 when the organisation cannot be found."""
     monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
 
     class FakeServices:
+        """Stub returning NotFound with organisation message."""
         def __init__(self, *args, **kwargs): pass
         def get_all_user_details(self):
             return ("NotFound", "Organisation 'test-org not found or inaccessible'")
@@ -76,6 +84,7 @@ def test_lambda_handles_org_not_found(set_env, monkeypatch):
     monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
 
     class FakeS3Writer:
+        """No-op S3 writer stub."""
         def __init__(self, *args, **kwargs): pass
         def write_data_to_s3(self, *args, **kwargs): pass
 
@@ -89,9 +98,11 @@ def test_lambda_handles_org_not_found(set_env, monkeypatch):
 
 
 def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
+    """Returns 500 when S3 write fails and message is logged."""
     monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
 
     class FakeServices:
+        """Stub service providing minimal user mappings."""
         def __init__(self, *args, **kwargs): pass
         def get_all_user_details(self):
             return ({"alice": "alice@ons.gov.uk"}, {"alice@ons.gov.uk": "alice"})
@@ -99,6 +110,7 @@ def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
     monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
 
     class FailingS3Writer:
+        """Stub writer that raises to simulate S3 failure."""
         def __init__(self, *args, **kwargs): pass
         def write_data_to_s3(self, *args, **kwargs):
             raise RuntimeError("S3 boom")

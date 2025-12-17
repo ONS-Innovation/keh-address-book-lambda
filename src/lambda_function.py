@@ -24,6 +24,11 @@ def lambda_handler(event, context):
         event: Input event data (dict)
         context: Lambda context object
 
+    Raises:
+        Exception: If secret manager or s3client are None
+        Exception: If the environmental variables are not found
+        Exception: If there was a failure writing to S3
+
     Returns:
         dict: Response with statusCode and generated data
     """
@@ -33,6 +38,8 @@ def lambda_handler(event, context):
     app_client_id = os.getenv("GITHUB_APP_CLIENT_ID")
     bucket_name = os.getenv("S3_BUCKET_NAME")
 
+    logger = wrapped_logging(False)
+
     try:
         secret_manager = boto3.client("secretsmanager")
         s3_client = boto3.client("s3")
@@ -40,10 +47,11 @@ def lambda_handler(event, context):
         secret_manager = None
         s3_client = None
 
-    if secret_manager == None or s3_client == None:
-        logger.log_error(f"Unable to retrieve Secret Manager ({"empty" if secret_manager == None else "Not empty"}) or S3Client" ({"empty" if secret_manager == None else "Not empty"})) #EMPTY IF NOT FOUND, IF FOUND "FOUND"
+    if secret_manager is None or s3_client is None:
+        message = f"Unable to retrieve Secret Manager ({'empty' if secret_manager is None else 'Not empty'}) or S3Client({'empty' if secret_manager is None else 'Not empty'}"
+        logger.log_error(message)
+        raise Exception(message)
 
-    logger = wrapped_logging(False)
     github_services = GitHubServices(
         org, logger, secret_manager, secret_name, app_client_id
     )
