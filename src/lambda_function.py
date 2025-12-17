@@ -37,9 +37,11 @@ def lambda_handler(event, context):
         secret_manager = boto3.client("secretsmanager")
         s3_client = boto3.client("s3")
     except Exception:
-        # In unit tests, AWS region/creds are not set; allow stubs to run.
         secret_manager = None
         s3_client = None
+
+    if secret_manager == None or s3_client == None:
+        logger.log_error(f"Unable to retrieve Secret Manager ({"empty" if secret_manager == None else "Not empty"}) or S3Client" ({"empty" if secret_manager == None else "Not empty"})) #EMPTY IF NOT FOUND, IF FOUND "FOUND"
 
     logger = wrapped_logging(False)
     github_services = GitHubServices(
