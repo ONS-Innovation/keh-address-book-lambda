@@ -14,6 +14,9 @@ class GitHubServices:
         """
         Initialises the GitHub Services Class
 
+        Raises:
+            Exception: if GitHub app installation token is not found
+
         Args:
             org - Organisation name
             logger - The Lambda functions logger
@@ -50,6 +53,7 @@ class GitHubServices:
 
         Raises:
             Exception: If the secret is not found in the Secret Manager.
+            Exception: if GitHub app installation token is not found
 
         Returns:
             str: GitHub token.
@@ -128,6 +132,16 @@ class GitHubServices:
             for node in members_conn.get("nodes", []):
                 username = node.get("login")
                 emails = node.get("organizationVerifiedDomainEmails", [])
+
+                if not username:
+                    self.logger.log_warning("Skipping member with empty username")
+                    continue
+
+                if emails == [] or not emails:
+                    self.logger.log_warning(
+                        f"Skipping member '{username}' with no verified domain emails"
+                    )
+                    continue
 
                 user_to_email[username] = emails
                 for address in emails:

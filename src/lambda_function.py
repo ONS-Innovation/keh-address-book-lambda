@@ -14,18 +14,20 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
-load_dotenv()
 
 
 def lambda_handler(event, context):
     """
     AWS Lambda handler function for generating synthetic test data.
 
-
     Args:
         event: Input event data (dict)
         context: Lambda context object
 
+    Raises:
+        Exception: If secret manager or s3client are None
+        Exception: If the environmental variables are not found
+        Exception: If there was a failure writing to S3
 
     Returns:
         dict: Response with statusCode and generated data
@@ -36,21 +38,20 @@ def lambda_handler(event, context):
     app_client_id = os.getenv("GITHUB_APP_CLIENT_ID")
     bucket_name = os.getenv("S3_BUCKET_NAME")
 
+    logger = wrapped_logging(False)
+
     try:
         secret_manager = boto3.client("secretsmanager")
         s3_client = boto3.client("s3")
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps(
-                {
-                    "message": "Failed to initialize AWS Secrets Manager or S3 client",
-                    "error": str(e),
-                }
-            ),
-        }
+    except Exception:
+        secret_manager = None
+        s3_client = None
 
-    logger = wrapped_logging(False)
+    if secret_manager is None or s3_client is None:
+        message = f"Unable to retrieve Secret Manager ({'empty' if secret_manager is None else 'Not empty'}) or S3Client({'empty' if secret_manager is None else 'Not empty'})"
+        logger.log_error(message)
+        raise Exception(message)
+
     github_services = GitHubServices(
         org, logger, secret_manager, secret_name, app_client_id
     )
@@ -58,12 +59,29 @@ def lambda_handler(event, context):
 
     # Fetch data from GitHub
     try:
-        user_to_email, email_to_user = github_services.get_all_user_details()
+        response = github_services.get_all_user_details()
+
+        if response[0] == "NotFound":
+            return {
+                "statusCode": 404,
+                "body": json.dumps(
+                    {
+                        "message": "Organisation not found",
+                        "error": str(response[1]),
+                    }
+                ),
+            }
+        else:
+            user_to_email, email_to_user = response
+
     except Exception as e:
         return {
-            "statusCode": 502,
+            "statusCode": 500,
             "body": json.dumps(
-                {"message": "Failed to fetch user details from GitHub", "error": str(e)}
+                {
+                    "message": "Missing required environment variables",
+                    "error": str(e),
+                }
             ),
         }
 

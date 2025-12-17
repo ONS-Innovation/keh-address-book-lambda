@@ -53,14 +53,17 @@ class S3Writer:
         Args:
             file_to_update: Name of the file to update within S3
             data: Contents of the new and updated file
+
+            Raises:
+            Exception: If filename or data is empty
+            Exception: If S3 update fails
         """
 
         # Ensure that the arguments are not None
         if file_to_update is None or data is None:
-            self.logger.warning(
-                f"filename or data is empty. filename: {'empty' if file_to_update is None else 'filled'}, data: {'empty' if data is None else 'filled'}"
-            )
-            return
+            message = f"filename or data is empty. filename: {'empty' if file_to_update is None else 'filled'}, data: {'empty' if data is None else 'filled'}"
+            self.logger.log_error(message)
+            raise Exception(message)
 
         # Convert dict to JSON string if needed
         if isinstance(data, dict):
@@ -88,6 +91,7 @@ class S3Writer:
             self.logger.log_error(
                 f"Unable to upload updated username and email data to S3, {error}"
             )
+            raise error
         else:
             self.logger.log_info(
                 "Successfully uploaded updated username and email data to S3"
