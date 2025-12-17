@@ -65,5 +65,5 @@ terraform.rc
 output/
 debug.log
 
-# Docker
+# Docker environmental file
 docker.env
