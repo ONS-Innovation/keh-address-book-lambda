@@ -3,13 +3,7 @@ import os
 import builtins
 import pytest
 from lambda_function import lambda_handler
-
-
-@pytest.fixture
-def set_env(monkeypatch):
-    monkeypatch.setenv("GITHUB_ORG", "test-org")
-    monkeypatch.setenv("AWS_SECRET_NAME", "test-secret")
-    monkeypatch.setenv("GITHUB_APP_CLIENT_ID", "12345")
+from fixtures import set_env
 
 
 def test_lambda_valid(monkeypatch):

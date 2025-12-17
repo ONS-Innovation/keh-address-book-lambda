@@ -1,36 +1,7 @@
 import pytest
 import github_services
+from fixtures import logger_spy, secret_manager_valid, secret_manager_empty
 
-@pytest.fixture
-def logger_spy():
-    class LoggerSpy:
-        def __init__(self):
-            self.calls = []
-
-        def log_error(self, message):
-            self.calls.append(message)
-
-        def log_warning(self, message):
-            self.calls.append(message)
-
-    return LoggerSpy()
-
-@pytest.fixture
-def secret_manager_valid():
-    class SecretManagerValid:
-        def get_secret_value(self, SecretId):
-            return {"SecretString": "FAKE_PEM_CONTENT"}
-        
-    return SecretManagerValid()
-
-@pytest.fixture
-def secret_manager_empty():
-    class SecretManagerEmpty:
-        def get_secret_value(self, SecretId):
-            return {"SecretString": ""}
-        
-    return SecretManagerEmpty()
-    
 
 def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
 
@@ -69,7 +40,7 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
     )
 
     assert isinstance(services.ql, FakeQL)
-    assert logger_spy.calls == []
+    assert logger_spy.all_calls == []
 
 
 def test_missing_secret(logger_spy, secret_manager_empty):
@@ -86,8 +57,8 @@ def test_missing_secret(logger_spy, secret_manager_empty):
     msg = str(exc.value)
     assert "Secret test-secret not found in AWS Secret Manager" in msg
 
-    assert len(logger_spy.calls) == 1
-    assert "Secret test-secret not found in AWS Secret Manager" in logger_spy.calls[0]
+    assert len(logger_spy.all_calls) == 1
+    assert "Secret test-secret not found in AWS Secret Manager" in logger_spy.all_calls[0]
 
 
 def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
@@ -111,7 +82,7 @@ def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
         )
 
     assert str(exc.value) == "failure"
-    assert any("Failed to retrieve GitHub App installation token" in m for m in logger_spy.calls)
+    assert any("Failed to retrieve GitHub App installation token" in m for m in logger_spy.all_calls)
 
 
 def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
@@ -183,7 +154,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
     assert email_to_user["a2@org.com"] == "alice"
     assert email_to_user["b@org.com"] == "bob"
 
-    assert logger_spy.calls == []
+    assert logger_spy.all_calls == []
 
 
 def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
@@ -231,7 +202,7 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
     assert user_to_email == {}
     assert email_to_user == {}
 
-    assert any("Skipping member 'alice' with no verified domain emails" in m for m in logger_spy.calls)
+    assert any("Skipping member 'alice' with no verified domain emails" in m for m in logger_spy.all_calls)
 
 
 def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
@@ -279,7 +250,7 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     assert user_to_email == {}
     assert email_to_user == {}
 
-    assert any("Skipping member with empty username" in m for m in logger_spy.calls)
+    assert any("Skipping member with empty username" in m for m in logger_spy.all_calls)
     
 
 def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_valid):
@@ -314,4 +285,4 @@ def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_val
     result = services.get_all_user_details()
     assert result[0] == "NotFound"
     assert "Organisation 'test-org not found or inaccessible'" in result[1]
-    assert any("Organisation 'test-org not found or inaccessible'" in m for m in logger_spy.calls)
+    assert any("Organisation 'test-org not found or inaccessible'" in m for m in logger_spy.all_calls)

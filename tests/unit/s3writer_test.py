@@ -1,36 +1,7 @@
 import json
 import pytest
 from s3writer import S3Writer
-
-@pytest.fixture
-def logger_spy():
-    class LoggerSpy:
-        def __init__(self):
-            self.infos = []
-            self.errors = []
-            self.warnings = []
-
-        def log_info(self, message):
-            self.infos.append(message)
-
-        def log_error(self, message):
-            self.errors.append(message)
-
-        def log_warning(self, message):
-            self.warnings.append(message)
-
-    return LoggerSpy()
-
-@pytest.fixture
-def s3_client():
-    class FakeS3Client:
-        def __init__(self, **kwargs):
-            pass
-        
-        def put_object(self, **kwargs):
-            raise Exception
-        
-    return FakeS3Client()
+from fixtures import logger_spy, s3_client
 
 
 def test_writes_to_s3_success(logger_spy):
@@ -85,4 +56,4 @@ def test_write_data_when_none(logger_spy):
     writer.write_data_to_s3(None, {"x": 1})
     writer.write_data_to_s3("k.json", None)
 
-    assert len(logger_spy.warnings) >= 2
+    assert len(logger_spy.all_calls) >= 2
