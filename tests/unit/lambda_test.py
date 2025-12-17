@@ -8,6 +8,8 @@ from fixtures import set_env
 
 def test_lambda_valid(monkeypatch):
     """Processes a valid event, writes to S3, returns 200."""
+    # Ensure AWS clients are stubbed so handler doesn't raise early
+    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
     class GitHubServices:
         def __init__(self):
             self.calls = 0

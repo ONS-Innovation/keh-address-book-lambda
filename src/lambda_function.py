@@ -48,7 +48,7 @@ def lambda_handler(event, context):
         s3_client = None
 
     if secret_manager is None or s3_client is None:
-        message = f"Unable to retrieve Secret Manager ({'empty' if secret_manager is None else 'Not empty'}) or S3Client({'empty' if secret_manager is None else 'Not empty'}"
+        message = f"Unable to retrieve Secret Manager ({'empty' if secret_manager is None else 'Not empty'}) or S3Client({'empty' if secret_manager is None else 'Not empty'})"
         logger.log_error(message)
         raise Exception(message)
 
