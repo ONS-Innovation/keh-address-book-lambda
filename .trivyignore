@@ -1,4 +1,0 @@
-# Suppress Dockerfile USER directive rule for AWS Lambda base images
-# Context: Lambda Python base image runs with an unprivileged sandbox user at runtime.
-# See https://avd.aquasec.com/misconfig/ds002
-AVD-DS-0002

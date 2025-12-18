@@ -111,10 +111,8 @@ def lambda_handler(event, context):
     }
 
 
-if __name__ == "__main__":
-    # Simple local runner to invoke the handler
-    # Note: Requires AWS creds and env vars to be set
-    try:
-        lambda_handler(event={}, context=None)
-    except Exception as e:
-        print(f"Error running lambda_handler locally: {e}")
+# if __name__ == "__main__":
+#     try:
+#         lambda_handler(event={}, context=None)
+#     except Exception as e:
+#         print(f"Error running lambda_handler locally: {e}")
