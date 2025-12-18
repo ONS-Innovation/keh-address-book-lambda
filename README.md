@@ -1,10 +1,13 @@
-# GitHub Repository Address Book Synchroniser Script
+# GitHub Repository Address Book Lambda
 
-A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails
+A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails from GitHub GraphQL API.
+
+This allows [Digital Landscape's](https://github.com/ONS-Innovation/keh-digital-landscape) Address book page to translate between usernames and email addresses for easy identification of different repo owners in the ONS.
+
 
 ## Table of Contents
 
-- [GitHub Repository Address Book Synchroniser Script](#github-repository-address-book-synchroniser-script)
+- [GitHub Repository Address Book Lambda](#github-repository-address-book-lambda)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Makefile](#makefile)
@@ -24,6 +27,10 @@ A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ON
     - [GitHub Actions](#github-actions)
     - [Linters Used](#linters-used)
     - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
+   - [Linting and Testing](#linting-and-testing)
+      - [GitHub Actions](#github-actions)
+      - [Linters Used](#linters-used)
+      - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
 
 ## Prerequisites
 

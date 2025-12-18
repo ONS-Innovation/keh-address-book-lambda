@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 ---
 # The mkdocs configuration settings
 
 site_name: GitHub Repository Archive Script
+=======
+site_name: GitHub Repository Address Book Synchroniser
+>>>>>>> 6528d5d (fix: Updated README.md description, name and table of contents, and mkdocs.yml information)
 
-repo_url: https://github.com/ONS-Innovation/github-repository-archive-script
-repo_name: GitHub Repository Archive Script
+repo_url: https://github.com/ONS-Innovation/keh-address-book-lambda
+repo_name: keh-address-book-lambda
 
 nav:
   - Home: "index.md"
