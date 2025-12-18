@@ -1,7 +1,7 @@
 # Do NOT commit the real tfvars file to GitHub
 aws_account_id          = "99999999999"
 aws_access_key_id       = "AWSACCCESSKEYID"
-aws_secret_access_key   = "AWSSECRETASSOCIATEDWITHACCESSKEY"
+aws_secret_access_key   = "AWS_SECRET_ACCESS_KEY"
 aws_secret_name         = "path-to-pem"
 env_name                = "sdp-dev"
 lambda_name             = "github-address-book-synchroniser"
