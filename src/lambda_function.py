@@ -111,6 +111,8 @@ def lambda_handler(event, context):
     }
 
 
+# This is for Development use only to allow local running of this code.
+
 # if __name__ == "__main__":
 #     try:
 #         lambda_handler(event={}, context=None)

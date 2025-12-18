@@ -33,7 +33,7 @@ variable "env_name" {
 variable "lambda_name" {
   description = "AWS Lambda Function Name"
   type        = string
-  default     = "lambda-function"
+  default     = "keh-address-book-lambda"
 }
 
 variable "lambda_version" {
@@ -63,7 +63,7 @@ variable "schedule" {
 variable "log_retention_days" {
   description = "Lambda log retention in days"
   type        = number
-  default     = 90
+  default     = 365
 }
 
 variable "github_org" {
