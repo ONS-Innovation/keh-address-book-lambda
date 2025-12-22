@@ -19,7 +19,7 @@ variable "aws_secret_name" {
 }
 
 variable "aws_bucket_name" {
-  description = "The name of the S3 bucket which the cloud config is stored in. This should not include the environment name (i.e. sdp-dev) as it will be added automatically."
+  description = "The name of the S3 bucket which the lambda's output files are to be kept in"
   type        = string
   default     = "digital-landscape"
 }
