@@ -20,6 +20,7 @@ A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ON
   - [Running the Project](#running-the-project)
     - [Containerised (Recommended)](#containerised-recommended)
     - [Outside of a Container (Development only)](#outside-of-a-container-development-only)
+      - [Output Files](#output-files)
   - [Deployment](#deployment)
     - [Overview](#overview)
     - [Deployment Prerequisites](#deployment-prerequisites)
@@ -158,7 +159,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    | GITHUB_APP_CLIENT_SECRET | Client secret for the GitHub App OAuth authentication.                                             |
    | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                              |
    | AWS_SECRET_NAME          | Name of the AWS Secrets Manager secret to retrieve.                                                |
-   | AWS_BUCKET_NAME          | The name of the S3 bucket which has the cloud config in (Only used when `use_local_config=False`). |
+   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to. |
    | AWS_ACCESS_KEY_ID        | AWS access key ID for the configured IAM credentials                                               |
    | AWS_SECRET_ACCESS_KEY    | AWS secret access key for the configured IAM credentials                                           |
 
@@ -229,6 +230,19 @@ To run the Lambda function outside of a container, we need to execute the `lambd
    ```bash
    python3 src/lambda_function.py
    ```
+
+   ### Output Files
+
+   When the Lambda runs successfully, it writes three JSON files into your configured S3 bucket under the `AddressBook/` prefix:
+
+   - AddressBook/addressBookUsernameKey.json: username -> list of verified org emails
+      Example: `{ "alice": ["alice@org.com", "alice2@org.com"], "bob": ["bob@org.com"] }`
+   - AddressBook/addressBookEmailKey.json: email -> username
+      Example: `{ "alice@org.com": "alice", "bob@org.com": "bob" }`
+   - AddressBook/addressBookIDKey.json: username -> GitHub account ID
+      Example: `{ "alice": 101, "bob": 202 }`
+
+   Note: The `AddressBook/` path is an S3 key prefix used to group these files in the bucket.
 
 ## Deployment
 
