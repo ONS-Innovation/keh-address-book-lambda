@@ -79,7 +79,7 @@ class GitHubServices:
 
         return token
 
-    def get_all_user_details(self) -> tuple[dict, dict] | tuple:
+    def get_all_user_details(self) -> tuple[dict, dict, dict] | tuple:
         """
         Retrieve all the usernames within the GitHub organisation
 
@@ -89,6 +89,7 @@ class GitHubServices:
 
         user_to_email = {}
         email_to_user = {}
+        user_to_id = {}
         has_next_page = True
         cursor = None
 
@@ -103,6 +104,7 @@ class GitHubServices:
                             }
                             nodes {
                                 login
+                                databaseId
                                 organizationVerifiedDomainEmails(login: $org)
                             }
                         }
@@ -131,6 +133,7 @@ class GitHubServices:
 
             for node in members_conn.get("nodes", []):
                 username = node.get("login")
+                account_id = node.get("databaseId")
                 emails = node.get("organizationVerifiedDomainEmails", [])
 
                 if not username:
@@ -144,7 +147,9 @@ class GitHubServices:
                     continue
 
                 user_to_email[username] = emails
+                if account_id is not None:
+                    user_to_id[username] = account_id
                 for address in emails:
                     email_to_user[address] = username
 
-        return user_to_email, email_to_user
+        return user_to_email, email_to_user, user_to_id
