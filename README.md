@@ -7,14 +7,13 @@ etc.
 
 # GitHub Repository Address Book Synchroniser Script
 
-A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails 
+A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails
 
 ## Table of Contents
 
 - [GitHub Repository Address Book Synchroniser Script](#github-repository-address-book-synchroniser-script)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
-  
   - [Makefile](#makefile)
   - [Documentation](#documentation)
   - [Development](#development)
