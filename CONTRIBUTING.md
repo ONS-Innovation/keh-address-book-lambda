@@ -7,23 +7,30 @@ Please take a moment to review this document before submitting your first pull r
 If you need any help, feel free to reach out to the development team.
 
 ## About this repository
-TODO: 
+
+TODO:
+
 - Purpose of lambda
-- How it is used in wider ONS (digiland) 
+- How it is used in wider ONS (digiland)
 
 ## Structure
-TODO: 
+
+TODO:
+
 - Structure of the mkdocs
 
 ## Development
+
 TODO:
+
 - "How can I help to develop in this"
 
 ## Documentation
+
 TODO:
+
 - Where is documentation
 - How is documentation written
-
 
 ## Commit Convention
 
@@ -87,9 +94,10 @@ TICKET-NUMBER-PATCH-NUMBER
 e.g. `KEH-123-patch-1`
 
 ## Testing
-TODO:
-- How is testing done?
 
+TODO:
+
+- How is testing done?
 
 ## Continuous Integration
 

@@ -30,6 +30,8 @@ black = "^25.12.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.6.1"
+mkdocs-material = "^9.6.15"
+mkdocstrings-python = "^1.16.12"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
