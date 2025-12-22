@@ -9,6 +9,6 @@ lambda_version          = "v0.0.1"
 lambda_arch             = "x86_64"
 lambda_timeout          = 900
 lambda_memory           = 512
-schedule                = "cron(0 6 ? * 2 *)"
+schedule                = "cron(0 6 ? * 3 *)"
 github_org              = "ONS-Innovation"
 github_app_client_id    = "123456789"
