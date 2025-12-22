@@ -38,14 +38,17 @@ mypy:  ## Run mypy.
 
 .PHONY: install
 install:  ## Install the dependencies excluding dev and docs.
+	poetry lock
 	poetry install --only main --no-interaction
 
 .PHONY: install-dev
 install-dev:  ## Install the dependencies including dev.
+	poetry lock
 	poetry install --with dev --no-interaction
 
 .PHONY: install-docs
 install-docs:  ## Install the dependencies including docs.
+	poetry lock
 	poetry install --with docs --no-interaction
 
 
