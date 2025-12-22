@@ -1,3 +1,5 @@
+# The mkdocs configuration settings
+---
 site_name: GitHub Repository Archive Script
 
 repo_url: https://github.com/ONS-Innovation/github-repository-archive-script
