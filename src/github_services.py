@@ -84,7 +84,7 @@ class GitHubServices:
         Retrieve all the usernames within the GitHub organisation
 
         Returns:
-            list(dict) - members usernames and emails
+            list(dict) - members usernames, emails and account ids
         """
 
         user_to_email = {}

@@ -18,22 +18,19 @@ A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ON
   - [Documentation](#documentation)
   - [Development](#development)
   - [Running the Project](#running-the-project)
-    - [Containerised (Recommended)](#containerised-recommended)
-    - [Outside of a Container (Development only)](#outside-of-a-container-development-only)
-      - [Output Files](#output-files)
+    - [Outside of a Container (Recommended) (Development only)](#outside-of-a-container-recommended-development-only)
+    - [Containerised](#containerised)
+    - [Output Files](#output-files)
   - [Deployment](#deployment)
     - [Overview](#overview)
     - [Deployment Prerequisites](#deployment-prerequisites)
     - [Storing the Container on AWS Elastic Container Registry (ECR)](#storing-the-container-on-aws-elastic-container-registry-ecr)
     - [Deploying the Lambda](#deploying-the-lambda)
     - [Destroying / Removing the Lambda](#destroying--removing-the-lambda)
-    - [Deployments with Concourse](#deployments-with-concourse)
-      - [Allowlisting your IP](#allowlisting-your-ip)
-      - [Setting up a pipeline](#setting-up-a-pipeline)
-      - [Triggering a pipeline](#triggering-a-pipeline)
   - [Linting and Testing](#linting-and-testing)
     - [GitHub Actions](#github-actions)
-    - [Running Tests Locally](#running-tests-locally)
+    - [Linters Used](#linters-used)
+    - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
 
 ## Prerequisites
 
@@ -108,7 +105,46 @@ To run the project during development, we recommend you [run the project outside
 
 ## Running the Project
 
-### Containerised (Recommended)
+### Outside of a Container (Recommended) (Development only)
+
+To run the Lambda function outside of a container, we need to execute the `lambda_handler()` function.
+
+1. Uncomment the following at the bottom of `lambda_function.py` (in `./src/` folder).
+
+   ```python
+   ...
+   # if __name__ == "__main__":
+   #     try:
+   #         lambda_handler(event={}, context=None)
+   #     except Exception as e:
+   #         print(f"Error running lambda_handler locally: {e}")
+   ...
+   ```
+
+   **Please Note:** If uncommenting the above in `lambda_function.py`, make sure you re-comment the code _before_ pushing back to GitHub.
+
+2. Export the required environment variables:
+
+   ```bash
+   export AWS_ACCESS_KEY_ID=<access_key_id>
+   export AWS_SECRET_ACCESS_KEY=<secret_access_key>
+   export AWS_REGION=eu-west-2
+   export AWS_SECRET_NAME=<secret_name>
+   export S3_BUCKET_NAME=<bucket_name>
+   export GITHUB_ORG=<org>
+   export GITHUB_APP_CLIENT_ID=<client_id>
+   export GITHUB_APP_ID=<app_id>
+   export GITHUB_APP_CLIENT_SECRET=<app_client_secret>
+
+   ```
+
+3. Run the script.
+
+   ```bash
+   python3 src/lambda_function.py
+   ```
+
+### Containerised
 
 To run the project, a Docker Daemon is required to containerise and execute the project. We recommend using [Colima](https://github.com/abiosoft/colima).
 
@@ -117,7 +153,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
 1. Containerise the project.
 
    ```bash
-   docker build -t github-repository-address-book-synchroniser-script .
+   docker build -t address-book-lambda .
    ```
 
 2. Check the image exists (Optional).
@@ -190,45 +226,6 @@ Before the doing the following, make sure your Daemon is running. If using Colim
 
    ```bash
    docker stop <container_id>
-   ```
-
-### Outside of a Container (Development only)
-
-To run the Lambda function outside of a container, we need to execute the `lambda_handler()` function.
-
-1. Uncomment the following at the bottom of `lambda_function.py` (in `./src/` folder).
-
-   ```python
-   ...
-   # if __name__ == "__main__":
-   #     try:
-   #         lambda_handler(event={}, context=None)
-   #     except Exception as e:
-   #         print(f"Error running lambda_handler locally: {e}")
-   ...
-   ```
-
-   **Please Note:** If uncommenting the above in `lambda_function.py`, make sure you re-comment the code _before_ pushing back to GitHub.
-
-2. Export the required environment variables:
-
-   ```bash
-   export AWS_ACCESS_KEY_ID=<access_key_id>
-   export AWS_SECRET_ACCESS_KEY=<secret_access_key>
-   export AWS_REGION=eu-west-2
-   export AWS_SECRET_NAME=<secret_name>
-   export S3_BUCKET_NAME=<bucket_name>
-   export GITHUB_ORG=<org>
-   export GITHUB_APP_CLIENT_ID=<client_id>
-   export GITHUB_APP_ID=<app_id>
-   export GITHUB_APP_CLIENT_SECRET=<app_client_secret>
-
-   ```
-
-3. Run the script.
-
-   ```bash
-   python3 src/lambda_function.py
    ```
 
    ### Output Files
@@ -380,48 +377,6 @@ terraform destroy -var-file=env/dev/dev.tfvars
 
 **Please Note:** Make sure to use the correct `.tfbackend` and `.tfvars` files for your environment.
 
-### Deployments with Concourse
-
-#### Allowlisting your IP
-
-To setup the deployment pipeline with concourse, you must first allowlist your IP address on the Concourse
-server. IP addresses are flushed everyday at 00:00 so this must be done at the beginning of every working day
-whenever the deployment pipeline needs to be used. Follow the instructions on the Confluence page (SDP Homepage > SDP Concourse > Concourse Login) to
-login. All our pipelines run on sdp-pipeline-prod, whereas sdp-pipeline-dev is the account used for
-changes to Concourse instance itself. Make sure to export all necessary environment variables from sdp-pipeline-prod (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN).
-
-#### Setting up a pipeline
-
-When setting up our pipelines, we use ecs-infra-user on sdp-dev to be able to interact with our infrastructure on AWS. The credentials for this are stored on
-AWS Secrets Manager so you do not need to set up anything yourself.
-
-To set the pipeline, run the following script:
-
-```bash
-chmod u+x ./concourse/scripts/set_pipeline.sh
-./concourse/scripts/set_pipeline.sh github-repo-address-book-synchroniser-script
-```
-
-Note that you only have to run chmod the first time running the script in order to give permissions.
-This script will set the branch and pipeline name to whatever branch you are currently on. It will also set the image tag on ECR to the current commit hash at the time of setting the pipeline.
-
-The pipeline name itself will usually follow a pattern as follows: `<repo-name>-<branch-name>`
-If you wish to set a pipeline for another branch without checking out, you can run the following:
-
-```bash
-./concourse/scripts/set_pipeline.sh github-repo-address-book-synchroniser-script <branch_name>
-```
-
-If the branch you are deploying is "main" or "master", it will trigger a deployment to the sdp-prod environment. To set the ECR image tag, you must draft a Github release pointing to the latest release of the main/master branch that has a tag in the form of vX.Y.Z. Drafting up a release will automatically deploy the latest version of the main/master branch with the associated release tag, but you can also manually trigger a build through the Concourse UI or the terminal prompt.
-
-#### Triggering a pipeline
-
-Once the pipeline has been set, you can manually trigger a build on the Concourse UI, or run the following command:
-
-```bash
-fly -t aws-sdp trigger-job -j github-repo-address-book-synchroniser-script-<branch-name>/build-and-push
-```
-
 ## Linting and Testing
 
 ### GitHub Actions
@@ -431,7 +386,19 @@ This file contains 2 GitHub Actions to automatically lint and test code on pull 
 - [`ci.yml`](./.github/workflows/ci.yml)
 - [`mega-linter.yml`](./.github/workflows/mega-linter.yml)
 
-### Running Tests Locally
+### Linters Used
+
+This repository uses the following linting and formatting tools:
+
+- MegaLinter (Python version): runs a broad set of linters, this includes:
+  - Black: code formatter (used for formatting and format checks)
+  - Ruff: Python linter (also used for autofixes and import sorting)
+  - Mypy: static type checker (configured via `mypy.ini`)
+
+Configuration notes:
+- Mypy reads settings from `mypy.ini`.
+
+### Running Linting and Tests Locally
 
 To lint and test locally, you need to:
 
@@ -447,13 +414,19 @@ To lint and test locally, you need to:
    make lint
    ```
 
-3. Run all the tests
+3. Run all the formatting
+
+   ```bash
+   make format
+   ```
+
+4. Run all the tests
 
    ```bash
    make test
    ```
 
-4. Run Megalinter
+5. Run Megalinter
 
    ```bash
    make megalint
