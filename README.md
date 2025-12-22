@@ -1,10 +1,3 @@
-Make sure you sort out the README after this.
-
-How would I run this tool?
-How do I run the linters?
-How do I run tests?
-etc.
-
 # GitHub Repository Address Book Synchroniser Script
 
 A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails
@@ -390,10 +383,13 @@ This file contains 2 GitHub Actions to automatically lint and test code on pull 
 
 This repository uses the following linting and formatting tools:
 
-- MegaLinter (Python version): runs a broad set of linters, this includes:
-  - Black: code formatter (used for formatting and format checks)
-  - Ruff: Python linter (also used for autofixes and import sorting)
-  - Mypy: static type checker (configured via `mypy.ini`)
+Python:
+- Black: code formatter (used for formatting and format checks)
+- Ruff: Python linter (also used for autofixes and import sorting)
+- Mypy: static type checker (configured via `mypy.ini`)
+
+Other Languages:
+- MegaLinter: runs a broad set of linters.
 
 Configuration notes:
 - Mypy reads settings from `mypy.ini`.
