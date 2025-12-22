@@ -72,7 +72,7 @@ def lambda_handler(event, context):
                 ),
             }
         else:
-            user_to_email, email_to_user = response
+            user_to_email, email_to_user, user_to_id = response
 
     except Exception as e:
         return {
@@ -89,9 +89,16 @@ def lambda_handler(event, context):
     try:
         username_key = "addressBookUsernameKey.json"
         email_key = "addressBookEmailKey.json"
+        id_key = "addressBookIDKey.json"
+        folder = "AddressBook/"
 
-        s3writer.write_data_to_s3(username_key, json.dumps(user_to_email, indent=2))
-        s3writer.write_data_to_s3(email_key, json.dumps(email_to_user, indent=2))
+        s3writer.write_data_to_s3(
+            folder + username_key, json.dumps(user_to_email, indent=2)
+        )
+        s3writer.write_data_to_s3(
+            folder + email_key, json.dumps(email_to_user, indent=2)
+        )
+        s3writer.write_data_to_s3(folder + id_key, json.dumps(user_to_id, indent=2))
     except Exception as e:
         return {
             "statusCode": 500,
@@ -111,10 +118,10 @@ def lambda_handler(event, context):
     }
 
 
-if __name__ == "__main__":
-    # Simple local runner to invoke the handler
-    # Note: Requires AWS creds and env vars to be set
-    try:
-        lambda_handler(event={}, context=None)
-    except Exception as e:
-        print(f"Error running lambda_handler locally: {e}")
+# This is for Development use only to allow local running of this code.
+
+# if __name__ == "__main__":
+#     try:
+#         lambda_handler(event={}, context=None)
+#     except Exception as e:
+#         print(f"Error running lambda_handler locally: {e}")

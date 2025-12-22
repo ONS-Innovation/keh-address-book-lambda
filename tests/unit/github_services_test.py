@@ -115,7 +115,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": True, "endCursor": "CUR1"},
                             "nodes": [
-                                {"login": "alice", "organizationVerifiedDomainEmails": ["a@org.com", "a2@org.com"]}
+                                {"login": "alice", "databaseId": 101, "organizationVerifiedDomainEmails": ["a@org.com", "a2@org.com"]}
                             ],
                         }
                     }
@@ -131,7 +131,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
                             "nodes": [
-                                {"login": "bob", "organizationVerifiedDomainEmails": ["b@org.com"]}
+                                {"login": "bob", "databaseId": 202, "organizationVerifiedDomainEmails": ["b@org.com"]}
                             ],
                         }
                     }
@@ -159,7 +159,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
         app_client_id="12345",
     )
 
-    user_to_email, email_to_user = services.get_all_user_details()
+    user_to_email, email_to_user, user_to_id = services.get_all_user_details()
 
     assert user_to_email == {
         "alice": ["a@org.com", "a2@org.com"],
@@ -168,6 +168,8 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
     assert email_to_user["a@org.com"] == "alice"
     assert email_to_user["a2@org.com"] == "alice"
     assert email_to_user["b@org.com"] == "bob"
+
+    assert user_to_id == {"alice": 101, "bob": 202}
 
     assert logger_spy.all_calls == []
 
@@ -216,10 +218,11 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
         app_client_id="12345",
     )
 
-    user_to_email, email_to_user = services.get_all_user_details()
+    user_to_email, email_to_user, user_to_id = services.get_all_user_details()
     
     assert user_to_email == {}
     assert email_to_user == {}
+    assert user_to_id == {}
 
     assert any("Skipping member 'alice' with no verified domain emails" in m for m in logger_spy.all_calls)
 
@@ -268,10 +271,11 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
         app_client_id="12345",
     )
 
-    user_to_email, email_to_user = services.get_all_user_details()
+    user_to_email, email_to_user, user_to_id = services.get_all_user_details()
     
     assert user_to_email == {}
     assert email_to_user == {}
+    assert user_to_id == {}
 
     assert any("Skipping member with empty username" in m for m in logger_spy.all_calls)
     

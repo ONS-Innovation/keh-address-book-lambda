@@ -19,6 +19,7 @@ def test_lambda_valid(monkeypatch):
             return (
                 {"alice": "alice@ons.gov.uk", "bob": "bob@ons.gov.uk"},
                 {"alice@ons.gov.uk": "alice", "bob@ons.gov.uk": "bob"},
+                {"alice": 101, "bob": 202},
             )
 
     class S3WriterStub:
@@ -44,9 +45,13 @@ def test_lambda_valid(monkeypatch):
     assert body.get('message')
     assert services_stub.calls == 1
 
-    assert len(s3writer_stub.call_args_list) == 2
+    assert len(s3writer_stub.call_args_list) == 3
     filenames = {args[0] for args, _ in s3writer_stub.call_args_list}
-    assert filenames == {"addressBookUsernameKey.json", "addressBookEmailKey.json"}
+    assert filenames == {
+        "AddressBook/addressBookUsernameKey.json",
+        "AddressBook/addressBookEmailKey.json",
+        "AddressBook/addressBookIDKey.json",
+    }
     for (filename, payload), _ in s3writer_stub.call_args_list:
         parsed = json.loads(payload)
         assert isinstance(parsed, dict)
@@ -102,7 +107,11 @@ def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
     class FakeServices:
         def __init__(self, *args, **kwargs): pass
         def get_all_user_details(self):
-            return ({"alice": "alice@ons.gov.uk"}, {"alice@ons.gov.uk": "alice"})
+            return (
+                {"alice": "alice@ons.gov.uk"},
+                {"alice@ons.gov.uk": "alice"},
+                {"alice": 101},
+            )
 
     monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
 

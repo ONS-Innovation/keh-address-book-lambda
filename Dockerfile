@@ -26,9 +26,6 @@ RUN pip install --no-cache-dir poetry==1.8.3 && \
 	poetry lock --no-update --no-interaction || poetry lock --no-interaction && \
 	poetry install --no-root --without dev --no-interaction
 
-### Optional: copy config if used by the app
-# (No config directory present in repo; remove or add when needed)
-
 # Copy function code to task root so top-level imports work
 COPY src/ ${LAMBDA_TASK_ROOT}/
 

@@ -37,13 +37,19 @@ mypy:  ## Run mypy.
 	poetry run mypy --config-file mypy.ini src
 
 .PHONY: install
-install:  ## Install the dependencies excluding dev.
-	poetry install --only main
+install:  ## Install the dependencies excluding dev and docs.
+	poetry lock
+	poetry install --only main --no-interaction
 
 .PHONY: install-dev
 install-dev:  ## Install the dependencies including dev.
 	poetry lock
-	poetry install --no-interaction
+	poetry install --with dev --no-interaction
+
+.PHONY: install-docs
+install-docs:  ## Install the dependencies including docs.
+	poetry lock
+	poetry install --with docs --no-interaction
 
 
 .PHONY: megalint
