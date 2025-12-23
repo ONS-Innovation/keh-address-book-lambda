@@ -1,10 +1,12 @@
-# GitHub Repository Address Book Synchroniser Script
+# GitHub Repository Address Book Lambda
 
-A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails
+A weekly AWS Lambda function to retrieve all ONS Digital GitHub usernames and ONS verified emails from GitHub GraphQL API.
+
+This allows [Digital Landscape's](https://github.com/ONS-Innovation/keh-digital-landscape) Address book page to translate between usernames and email addresses for easy identification of different repo owners in the ONS.
 
 ## Table of Contents
 
-- [GitHub Repository Address Book Synchroniser Script](#github-repository-address-book-synchroniser-script)
+- [GitHub Repository Address Book Lambda](#github-repository-address-book-lambda)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Makefile](#makefile)
@@ -57,10 +59,15 @@ This project uses [MkDocs](https://www.mkdocs.org/) for documentation. The docum
 2. Serve the documentation locally:
 
    ```bash
-   mkdocs serve
+   make docs-serve
    ```
 
 3. Open your web browser and navigate to `http://localhost:8000`.
+
+Optional:
+
+- Build static site: `make docs-build`
+- Deploy to GitHub Pages manually: `make docs-deploy` (CI also deploys on pushes to `main`)
 
 ## Development
 
@@ -134,7 +141,7 @@ To run the Lambda function outside of a container, we need to execute the `lambd
 3. Run the script.
 
    ```bash
-   python3 src/lambda_function.py
+   poetry run python3 src/lambda_function.py
    ```
 
 ### Containerised
@@ -180,17 +187,17 @@ Before the doing the following, make sure your Daemon is running. If using Colim
 
    When running the container, you are required to pass some environment variables:
 
-   | Variable                 | Description                                                                                        |
-   | ------------------------ | -------------------------------------------------------------------------------------------------- |
-   | GITHUB_ORG               | The organisation you would like to run the tool in.                                                |
-   | GITHUB_APP_CLIENT_ID     | The Client ID for the GitHub App which the tool uses to authenticate with the GitHub API.          |
-   | GITHUB_APP_ID            | Numeric ID of the GitHub App used for authentication.                                              |
-   | GITHUB_APP_CLIENT_SECRET | Client secret for the GitHub App OAuth authentication.                                             |
-   | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                              |
-   | AWS_SECRET_NAME          | Name of the AWS Secrets Manager secret to retrieve.                                                |
-   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to. |
-   | AWS_ACCESS_KEY_ID        | AWS access key ID for the configured IAM credentials                                               |
-   | AWS_SECRET_ACCESS_KEY    | AWS secret access key for the configured IAM credentials                                           |
+   | Variable                 | Description                                                                               |
+   | ------------------------ | ----------------------------------------------------------------------------------------- |
+   | GITHUB_ORG               | The organisation you would like to run the tool in.                                       |
+   | GITHUB_APP_CLIENT_ID     | The Client ID for the GitHub App which the tool uses to authenticate with the GitHub API. |
+   | GITHUB_APP_ID            | Numeric ID of the GitHub App used for authentication.                                     |
+   | GITHUB_APP_CLIENT_SECRET | Client secret for the GitHub App OAuth authentication.                                    |
+   | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                     |
+   | AWS_SECRET_NAME          | Name of the AWS Secrets Manager secret to retrieve.                                       |
+   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to.                    |
+   | AWS_ACCESS_KEY_ID        | AWS access key ID for the configured IAM credentials                                      |
+   | AWS_SECRET_ACCESS_KEY    | AWS secret access key for the configured IAM credentials                                  |
 
    Once the container is running, a local endpoint is created at `localhost:9000/2015-03-31/functions/function/invocations`.
 
@@ -224,13 +231,12 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    ### Output Files
 
    When the Lambda runs successfully, it writes three JSON files into your configured S3 bucket under the `AddressBook/` prefix:
-
    - AddressBook/addressBookUsernameKey.json: username -> list of verified org emails
-      Example: `{ "alice": ["alice@org.com", "alice2@org.com"], "bob": ["bob@org.com"] }`
+     Example: `{ "alice": ["alice@org.com", "alice2@org.com"], "bob": ["bob@org.com"] }`
    - AddressBook/addressBookEmailKey.json: email -> username
-      Example: `{ "alice@org.com": "alice", "bob@org.com": "bob" }`
+     Example: `{ "alice@org.com": "alice", "bob@org.com": "bob" }`
    - AddressBook/addressBookIDKey.json: username -> GitHub account ID
-      Example: `{ "alice": 101, "bob": 202 }`
+     Example: `{ "alice": 101, "bob": 202 }`
 
    Note: The `AddressBook/` path is an S3 key prefix used to group these files in the bucket.
 
@@ -384,14 +390,17 @@ This file contains 2 GitHub Actions to automatically lint and test code on pull 
 This repository uses the following linting and formatting tools:
 
 Python:
+
 - Black: code formatter (used for formatting and format checks)
 - Ruff: Python linter (also used for autofixes and import sorting)
 - Mypy: static type checker (configured via `mypy.ini`)
 
 Other Languages:
+
 - MegaLinter: runs a broad set of linters.
 
 Configuration notes:
+
 - Mypy reads settings from `mypy.ini`.
 
 ### Running Linting and Tests Locally
