@@ -1,11 +1,4 @@
-<<<<<<< HEAD
----
-# The mkdocs configuration settings
-
-site_name: GitHub Repository Archive Script
-=======
-site_name: GitHub Repository Address Book Synchroniser
->>>>>>> 6528d5d (fix: Updated README.md description, name and table of contents, and mkdocs.yml information)
+site_name: GitHub Repository Address Book Lambda
 
 repo_url: https://github.com/ONS-Innovation/keh-address-book-lambda
 repo_name: keh-address-book-lambda
@@ -16,10 +9,12 @@ nav:
   - Technical Documentation:
       - Overview: "technical_documentation/overview.md"
       - The Process: "technical_documentation/the_process.md"
-      - Exemption Process: "technical_documentation/exemption_process.md"
-      - Configuration: "technical_documentation/configuration.md"
-      - Notification Issue: "technical_documentation/notification_issue.md"
       - Logging: "technical_documentation/logging.md"
+      - Source Code:
+          - Lambda Handler: "technical_documentation/api_lambda_function.md"
+          - GitHub Services: "technical_documentation/api_github_services.md"
+          - S3 Writer: "technical_documentation/api_s3writer.md"
+          - Logger: "technical_documentation/api_logger.md"
       - Documentation: "documentation.md"
 
 theme:
@@ -57,8 +52,8 @@ theme:
     - header.autohide
     - content.code.copy
 
-  logo: assets/logo.png
-  favicon: assets/favicon.ico
+  # logo: assets/logo.png
+  # favicon: assets/favicon.ico
 
   icon:
     repo: fontawesome/brands/github
@@ -85,3 +80,7 @@ plugins:
   - search
   - mkdocstrings:
       default_handler: python
+      handlers:
+        python:
+          paths:
+            - src

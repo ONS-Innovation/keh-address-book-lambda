@@ -27,10 +27,6 @@ This allows [Digital Landscape's](https://github.com/ONS-Innovation/keh-digital-
     - [GitHub Actions](#github-actions)
     - [Linters Used](#linters-used)
     - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
-   - [Linting and Testing](#linting-and-testing)
-      - [GitHub Actions](#github-actions)
-      - [Linters Used](#linters-used)
-      - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
 
 ## Prerequisites
 
@@ -64,10 +60,15 @@ This project uses [MkDocs](https://www.mkdocs.org/) for documentation. The docum
 2. Serve the documentation locally:
 
    ```bash
-   mkdocs serve
+   make docs-serve
    ```
 
 3. Open your web browser and navigate to `http://localhost:8000`.
+
+Optional:
+
+- Build static site: `make docs-build`
+- Deploy to GitHub Pages manually: `make docs-deploy` (CI also deploys on pushes to `main`)
 
 ## Development
 
@@ -141,7 +142,7 @@ To run the Lambda function outside of a container, we need to execute the `lambd
 3. Run the script.
 
    ```bash
-   python3 src/lambda_function.py
+   poetry run python3 src/lambda_function.py
    ```
 
 ### Containerised
