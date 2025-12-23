@@ -64,6 +64,7 @@ Below are common questions and quick fixes when using the Address Book Lambda.
   - Yes. The GitHub Pages workflow `.github/workflows/docs.yml` builds on pushes to `main` and deploys to Pages.
 
 For a deeper dive, see:
+
 - [Overview](technical_documentation/overview.md)
 - [The Process](technical_documentation/the_process.md)
 - [Configuration](technical_documentation/configuration.md)

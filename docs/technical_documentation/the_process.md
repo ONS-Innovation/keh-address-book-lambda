@@ -14,9 +14,9 @@ See [Configuration](configuration.md) for required environment variables.
 - Establish GitHub App authentication and create GraphQL requests (via `github-api-toolkit`).
 - Retrieve organisation members and their verified organisation email addresses and account IDs, using pagination.
 - Build three dictionaries:
-	- username → list of verified org emails
-	- email → username
-	- username → GitHub account ID
+  - username → list of verified org emails
+  - email → username
+  - username → GitHub account ID
 - Convert the dictionaries to JSON.
 - Write JSON files to S3 under the `AddressBook/` prefix.
 
@@ -64,8 +64,8 @@ def lambda_handler(event, context):
 ## Outputs
 
 - Files are written to S3 under the `AddressBook/` prefix:
-	- `addressBookUsernameKey.json`
-	- `addressBookEmailKey.json`
-	- `addressBookIDKey.json`
+  - `addressBookUsernameKey.json`
+  - `addressBookEmailKey.json`
+  - `addressBookIDKey.json`
 
 Return to the overview: [Overview](overview.md) or dive deeper into configuration: [Configuration](configuration.md).

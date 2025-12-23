@@ -5,11 +5,13 @@ Logging is implemented via a wrapper around Python’s `logging` module in `src/
 ## API
 
 Class: `wrapped_logging(debug: bool)`
+
 - `log_info(message: str)`: log at INFO.
 - `log_error(message: str)`: log at ERROR.
 - `log_warning(message: str)`: log at WARNING.
 
 Behaviour:
+
 - Default level is `INFO`.
 - When `debug=True`, `logging.basicConfig(filename="debug.log", filemode="w")` writes a debug file locally (useful during development).
 

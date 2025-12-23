@@ -7,9 +7,9 @@ The Lambda handler controls the address book run: reads configuration, authentic
 - Reads env vars: `GITHUB_ORG`, `AWS_SECRET_NAME`, `GITHUB_APP_CLIENT_ID`, `S3_BUCKET_NAME`.
 - Creates Boto3 clients for Secrets Manager and S3.
 - Uses `GitHubServices.get_all_user_details()` to retrieve:
-	- username → verified org emails
-	- email → username
-	- username → GitHub account ID
+  - username → verified org emails
+  - email → username
+  - username → GitHub account ID
 - Writes JSON outputs under `AddressBook/` prefix to the configured S3 bucket.
 - Logs progress and errors via `wrapped_logging`.
 

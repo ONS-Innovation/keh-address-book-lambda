@@ -3,6 +3,7 @@
 This Lambda queries the GitHub GraphQL API for all members of the configured organisation, collects their verified org email addresses and account IDs, and writes three S3 JSON lookup files used by Digital Landscape.
 
 Outputs (under `AddressBook/` in S3):
+
 - `addressBookUsernameKey.json`: username → list of verified org emails
 - `addressBookEmailKey.json`: email → username
 - `addressBookIDKey.json`: username → GitHub account ID
@@ -27,26 +28,29 @@ S3 key prefix: `AddressBook/`
 Example shapes:
 
 `AddressBook/addressBookUsernameKey.json`
+
 ```json
 {
-	"alice": ["alice@org.com", "alice2@org.com"],
-	"bob": ["bob@org.com"]
+  "alice": ["alice@org.com", "alice2@org.com"],
+  "bob": ["bob@org.com"]
 }
 ```
 
 `AddressBook/addressBookEmailKey.json`
+
 ```json
 {
-	"alice@org.com": "alice",
-	"bob@org.com": "bob"
+  "alice@org.com": "alice",
+  "bob@org.com": "bob"
 }
 ```
 
 `AddressBook/addressBookIDKey.json`
+
 ```json
 {
-	"alice": 101,
-	"bob": 202
+  "alice": 101,
+  "bob": 202
 }
 ```
 

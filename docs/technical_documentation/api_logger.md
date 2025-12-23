@@ -6,9 +6,9 @@ Thin wrapper around Python’s `logging` providing simple `info`, `warning`, and
 
 - Class: `wrapped_logging(debug: bool)`
 - Methods:
-	- `log_info(message: str)`
-	- `log_warning(message: str)`
-	- `log_error(message: str)`
+  - `log_info(message: str)`
+  - `log_warning(message: str)`
+  - `log_error(message: str)`
 - Default level is `INFO`. When `debug=True`, a local `debug.log` file is written (development only).
 
 ## Quick Start

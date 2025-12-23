@@ -58,20 +58,21 @@ Ensure GitHub Pages is enabled in repository settings (Source: GitHub Actions).
 ## Troubleshooting
 
 - Command not found: `make mkdocs-serve`
-	- Use `make docs-serve` (the target is named `docs-serve`).
+  - Use `make docs-serve` (the target is named `docs-serve`).
 - Missing assets (logo/favicon)
-	- `mkdocs.yml` has logo/favicon commented out. Add files under `docs/assets/` and uncomment.
+  - `mkdocs.yml` has logo/favicon commented out. Add files under `docs/assets/` and uncomment.
 - Nav entries show 404
-	- Ensure files exist under `docs/` matching `mkdocs.yml` nav paths.
+  - Ensure files exist under `docs/` matching `mkdocs.yml` nav paths.
 - Material theme features not present
-	- Confirm `make install-docs` ran and Poetry installed the `docs` group.
+  - Confirm `make install-docs` ran and Poetry installed the `docs` group.
 
 ## Navigation
 
 Top-level pages:
+
 - Home (`index.md`)
 - FAQ (`faq.md`)
 - Technical Documentation
-	- Overview
-	- The Process
-	- Logging
+  - Overview
+  - The Process
+  - Logging
