@@ -53,8 +53,8 @@ theme:
     - header.autohide
     - content.code.copy
 
-  # logo: assets/logo.png
-  # favicon: assets/favicon.ico
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
 
   icon:
     repo: fontawesome/brands/github

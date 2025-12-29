@@ -27,34 +27,6 @@ See [Configuration](configuration.md) for required environment variables.
 - `src/s3writer.py`: Writes JSON outputs to S3.
 - `src/logger.py`: Provides structured logging.
 
-## Implementation
-
-For full source see `src/lambda_function.py`. The core logic is:
-
-```python
-def lambda_handler(event, context):
-    org = os.getenv("GITHUB_ORG")
-    secret_name = os.getenv("AWS_SECRET_NAME")
-    app_client_id = os.getenv("GITHUB_APP_CLIENT_ID")
-    bucket = os.getenv("S3_BUCKET_NAME")
-
-    logger = wrapped_logging(False)
-    sm = boto3.client("secretsmanager")
-    s3 = boto3.client("s3")
-
-    gh = GitHubServices(org, logger, sm, secret_name, app_client_id)
-    s3writer = S3Writer(logger, s3, bucket)
-
-    user_to_email, email_to_user, user_to_id = gh.get_all_user_details()
-
-    prefix = "AddressBook/"
-    s3writer.write_data_to_s3(prefix + "addressBookUsernameKey.json", json.dumps(user_to_email))
-    s3writer.write_data_to_s3(prefix + "addressBookEmailKey.json", json.dumps(email_to_user))
-    s3writer.write_data_to_s3(prefix + "addressBookIDKey.json", json.dumps(user_to_id))
-
-    return {"statusCode": 200}
-```
-
 ## Error Handling & Observability
 
 - All major steps are logged; inspect CloudWatch Logs for failures or anomalies.

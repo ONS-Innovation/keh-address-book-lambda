@@ -1,78 +1,69 @@
 # Documentation
 
-We use MkDocs with the Material theme.
+This site uses MkDocs to build its documentation and GitHub Pages for hosting.
 
-## Prerequisites
+## Format
 
-- Python and Poetry installed.
-- Install docs dependencies (Material, mkdocstrings) via Poetry’s `docs` group.
+Documentation within this project follows the following pattern:
 
-```bash
-make install-docs
-```
+- A `README.md` for each component
+- A `/docs` folder for the project
 
-## Local preview
+Each `README.md` should contain:
 
-```bash
-make docs-serve
-```
+- A description of what the component is/does
+- A list of any prerequisites
+- Setup instructions
+- Execution instructions
+- Deployment instructions
 
-Alternatively:
+The `/docs` folder should contain:
 
-```bash
-poetry run mkdocs serve
-```
+- A description of what the project is
+- An overview of how the everything fits together in the project
+- An explanation of the tech stack
+- Details of the underlying dataset
 
-Open: http://localhost:8000
+A majority of the information should reside within the `/docs` directory over the `README`. The `README`s in this project should be kept for concise instructions on how to use each component. Any detailed explanation should be kept within `/docs`.
 
-## Build static site
+## Getting MkDocs Setup
 
-```bash
-make docs-build
-```
+In order to build an MkDocs deployment or serve the documentation locally, we need to install MkDocs and its dependencies (Using Poetry).
 
-Alternatively:
+1. Navigate into the project's root directory.
 
-```bash
-poetry run mkdocs build
-```
+2. Install MkDocs and its dependencies.
 
-Outputs are written to the local `site/` folder.
+    ```bash
+    make install-docs
+    ```
 
-## Deploy
+3. You can now use MkDocs. To see a list of commands run the following:
 
-Deployment is automated to GitHub Pages via `.github/workflows/docs.yml`. Pushes to `main` that change `docs/**` or `mkdocs.yml` will build and deploy.
+    ```bash
+    mkdocs --help
+    ```
 
-```bash
-make docs-deploy
-```
+**Please Note:** This project uses Poetry to install MkDocs and manage dependencies. Ensure you have Python and Poetry installed beforehand.
 
-Alternatively:
+## Updating MkDocs Deployment
 
-```bash
-poetry run mkdocs gh-deploy --force
-```
+### GitHub Action to Deploy Documentation
 
-Ensure GitHub Pages is enabled in repository settings (Source: GitHub Actions).
+A GitHub Action is set up to automatically deploy the documentation to GitHub Pages whenever a commit is made to the `main` branch. This action is triggered by a push event to the `main` branch and runs the `mkdocs gh-deploy` command to build and deploy the documentation.
 
-## Troubleshooting
+### Manual Deployment
 
-- Command not found: `make mkdocs-serve`
-  - Use `make docs-serve` (the target is named `docs-serve`).
-- Missing assets (logo/favicon)
-  - `mkdocs.yml` has logo/favicon commented out. Add files under `docs/assets/` and uncomment.
-- Nav entries show 404
-  - Ensure files exist under `docs/` matching `mkdocs.yml` nav paths.
-- Material theme features not present
-  - Confirm `make install-docs` ran and Poetry installed the `docs` group.
+If changes are made within `/docs`, the GitHub Pages deployment will need to be updated. Assuming you have already installed [MkDocs](https://www.mkdocs.org/getting-started/#installation) and [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/#installation), do the following:
 
-## Navigation
+1. Navigate to the projects root directory.
 
-Top-level pages:
+2. Deploy the documentation to GitHub Pages.
 
-- Home (`index.md`)
-- FAQ (`faq.md`)
-- Technical Documentation
-  - Overview
-  - The Process
-  - Logging
+    ```bash
+    mkdocs gh-deploy
+    ```
+
+3. This will build the documentation and deploy it to the `gh-pages` branch of your repository. The documentation will be available at `https://ONS-Innovation.github.io/<repository-name>/`.
+
+**Please Note:** The `gh-deploy` command will overwrite the `gh-pages` branch and make the local changes available on GitHub Pages. Make sure that these changes are appropriate and have been reviewed before deployment.

@@ -26,6 +26,12 @@ This allows [Digital Landscape's](https://github.com/ONS-Innovation/keh-digital-
     - [GitHub Actions](#github-actions)
     - [Linters Used](#linters-used)
     - [Running Linting and Tests Locally](#running-linting-and-tests-locally)
+    - [FAQs and troubleshooting tips](#faqs-and-troubleshooting-tips)
+    - [Why do I get an S3 permissions error when writing outputs?](#why-do-i-get-an-s3-permissions-error-when-writing-outputs)
+    - [Why are some users missing email addresses in the outputs?](#why-are-some-users-missing-email-addresses-in-the-outputs)
+    - [How do I run locally and see logs?](#how-do-i-run-locally-and-see-logs)
+    - [MkDocs won’t serve or pages 404 locally.](#mkdocs-wont-serve-or-pages-404-locally)
+    - [Where are the outputs written?](#where-are-the-outputs-written)
 
 ## Prerequisites
 
@@ -68,6 +74,7 @@ Optional:
 
 - Build static site: `make docs-build`
 - Deploy to GitHub Pages manually: `make docs-deploy` (CI also deploys on pushes to `main`)
+- [Deply Mkdocs Action](./.github/workflows/deploy_mkdocs.yml)
 
 ## Development
 
@@ -438,3 +445,22 @@ To lint and test locally, you need to:
    ```
 
 **Please Note:** This requires a docker daemon to be running. We recommend using [Colima](https://github.com/abiosoft/colima) if using MacOS or Linux. A docker daemon is required because Megalinter is ran from a docker image.
+
+### FAQs and troubleshooting tips
+
+### Why do I get an S3 permissions error when writing outputs?
+  - Ensure the Lambda execution role has `s3:PutObject` permission on the target bucket and the `AddressBook/` prefix.
+
+### Why are some users missing email addresses in the outputs?
+  - Only verified organisation emails are included. Users without a verified org email will not appear in `addressBookUsernameKey.json` or `addressBookEmailKey.json`.
+
+### How do I run locally and see logs?
+  - Export the required environment variables (see above) and run the handler locally.
+
+### MkDocs won’t serve or pages 404 locally.
+  - Run `make install-docs` first, then `make docs-serve`. Verify `mkdocs.yml` nav matches files under `docs/`.
+
+### Where are the outputs written?
+  - To your configured S3 bucket under the `AddressBook/` prefix as three JSON files.
+
+For more Q&A: see the dedicated [FAQ](faq.md).
