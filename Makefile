@@ -59,3 +59,15 @@ megalint:  ## Run the mega-linter.
 		-v $(shell pwd):/tmp/lint:rw \
 		oxsecurity/megalinter:v8
 
+.PHONY: docs-serve
+docs-serve: ## Serve docs locally at http://localhost:8000
+	poetry run mkdocs serve
+
+.PHONY: docs-build
+docs-build: ## Build static docs site into ./site
+	poetry run mkdocs build --strict
+
+.PHONY: docs-deploy
+docs-deploy: ## Deploy docs to GitHub Pages via gh-deploy
+	poetry run mkdocs gh-deploy --force
+
