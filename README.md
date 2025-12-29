@@ -449,18 +449,23 @@ To lint and test locally, you need to:
 ### FAQs and troubleshooting tips
 
 ### Why do I get an S3 permissions error when writing outputs?
-  - Ensure the Lambda execution role has `s3:PutObject` permission on the target bucket and the `AddressBook/` prefix.
+
+- Ensure the Lambda execution role has `s3:PutObject` permission on the target bucket and the `AddressBook/` prefix.
 
 ### Why are some users missing email addresses in the outputs?
-  - Only verified organisation emails are included. Users without a verified org email will not appear in `addressBookUsernameKey.json` or `addressBookEmailKey.json`.
+
+- Only verified organisation emails are included. Users without a verified org email will not appear in `addressBookUsernameKey.json` or `addressBookEmailKey.json`.
 
 ### How do I run locally and see logs?
-  - Export the required environment variables (see above) and run the handler locally.
+
+- Export the required environment variables (see above) and run the handler locally.
 
 ### MkDocs won’t serve or pages 404 locally.
-  - Run `make install-docs` first, then `make docs-serve`. Verify `mkdocs.yml` nav matches files under `docs/`.
+
+- Run `make install-docs` first, then `make docs-serve`. Verify `mkdocs.yml` nav matches files under `docs/`.
 
 ### Where are the outputs written?
-  - To your configured S3 bucket under the `AddressBook/` prefix as three JSON files.
+
+- To your configured S3 bucket under the `AddressBook/` prefix as three JSON files.
 
 For more Q&A: see the dedicated [FAQ](faq.md).
