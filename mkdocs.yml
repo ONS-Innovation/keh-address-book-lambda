@@ -1,10 +1,8 @@
 ---
-# The mkdocs configuration settings
+site_name: GitHub Repository Address Book Lambda
 
-site_name: GitHub Repository Archive Script
-
-repo_url: https://github.com/ONS-Innovation/github-repository-archive-script
-repo_name: GitHub Repository Archive Script
+repo_url: https://github.com/ONS-Innovation/keh-address-book-lambda
+repo_name: keh-address-book-lambda
 
 nav:
   - Home: "index.md"
@@ -12,10 +10,12 @@ nav:
   - Technical Documentation:
       - Overview: "technical_documentation/overview.md"
       - The Process: "technical_documentation/the_process.md"
-      - Exemption Process: "technical_documentation/exemption_process.md"
-      - Configuration: "technical_documentation/configuration.md"
-      - Notification Issue: "technical_documentation/notification_issue.md"
       - Logging: "technical_documentation/logging.md"
+      - Source Code:
+          - Lambda Handler: "technical_documentation/api_lambda_function.md"
+          - GitHub Services: "technical_documentation/api_github_services.md"
+          - S3 Writer: "technical_documentation/api_s3writer.md"
+          - Logger: "technical_documentation/api_logger.md"
       - Documentation: "documentation.md"
 
 theme:
@@ -81,3 +81,7 @@ plugins:
   - search
   - mkdocstrings:
       default_handler: python
+      handlers:
+        python:
+          paths:
+            - src

@@ -18,6 +18,6 @@ skip-check:
   - CKV_TF_1
 
   # Ignore adding code-signing to Lambda.
-  # It is not needed here since our Lambda functions use container
+  # It is not needed here since our Lambda functions use container
   # images over uploading .zip files for layers.
   - CKV_AWS_272
