@@ -140,14 +140,14 @@ resource "aws_cloudwatch_log_group" "loggroup" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "error_alarm" {
-  alarm_name                = "Addressbook-Errors"
+  alarm_name                = "${var.lambda_name}-error-alarm"
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = 1
   metric_name               = "Errors"
-  namespace                 = "AWS/Lambda"
+  namespace                 = "aws/lambda"
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 0
-  alarm_description         = "This metric counts the number of errors that the GitHub address book synchroniser Lambda function produces where if it is over 0 then an alarm is created"
+  alarm_description         = "This metric counts the number of errors that the GitHub address book Lambda function produces where if it is over 0 then an alarm is created"
   insufficient_data_actions = []
 }

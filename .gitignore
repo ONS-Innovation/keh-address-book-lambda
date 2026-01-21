@@ -67,3 +67,6 @@ debug.log
 
 # Docker environmental file
 docker.env
+
+# Megalinter reports
+megalinter-reports/

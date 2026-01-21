@@ -173,7 +173,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
 
    ```bash
    REPOSITORY                         TAG       IMAGE ID       CREATED          SIZE
-   github-repository-address-book-synchroniser-script   latest    b4a1e32ce51b   12 minutes ago   840MB
+   address-book-lambda                latest    b4a1e32ce51b   12 minutes ago   840MB
    ```
 
 3. Run the image.
@@ -189,7 +189,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    -e GITHUB_APP_CLIENT_ID=<client_id> \
    -e S3_BUCKET_NAME=<bucket_name>\
    -e GITHUB_APP_CLIENT_SECRET=<app_client_secret>
-   github-repository-address-book-synchroniser-script
+   address-book-lambda
    ```
 
    When running the container, you are required to pass some environment variables:
@@ -218,7 +218,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
 
    ```bash
    CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS         PORTS                                       NAMES
-   ca890d30e24d   github-repository-address-book-synchroniser-script   "/lambda-entrypoint.…"   5 seconds ago   Up 4 seconds   0.0.0.0:9000->8080/tcp, :::9000->8080/tcp   recursing_bartik
+   ca890d30e24d   address-book-lambda                "/lambda-entrypoint.…"   5 seconds ago   Up 4 seconds   0.0.0.0:9000->8080/tcp, :::9000->8080/tcp   recursing_bartik
    ```
 
 5. Post to the endpoint (`localhost:9000/2015-03-31/functions/function/invocations`).
@@ -272,7 +272,7 @@ Additionally, we recommend that you keep the container versioning in sync with G
 
 When changes are made to the repository's source code, the code must be containerised and pushed to AWS for the lambda to use.
 
-The following instructions deploy to an ECR repository called `sdp-dev-address-book-synchroniser`. Please change this to `<env_name>-<lambda_name>` based on your AWS instance.
+The following instructions deploy to an ECR repository called `sdp-dev-address-book-lambda`. Please change this to `<env_name>-<lambda_name>` based on your AWS instance.
 
 All of the commands (steps 2-5) are available for your environment within the AWS GUI. Navigate to ECR > {repository_name} > View push commands.
 
@@ -292,23 +292,23 @@ All of the commands (steps 2-5) are available for your environment within the AW
 3. Ensuring you're at the root of the repository, build a docker image of the project.
 
    ```bash
-   docker build -t sdp-dev-address-book-synchroniser .
+   docker build -t sdp-dev-address-book-lambda .
    ```
 
-   **Please Note:** Change `sdp-dev-address-book-synchroniser` within the above command to `<env_name>-<lambda_name>`.
+   **Please Note:** Change `sdp-dev-address-book-lambda` within the above command to `<env_name>-<lambda_name>`.
 
 4. Tag the docker image to push to AWS, using the correct versioning mentioned in [prerequisites](#deployment-prerequisites).
 
    ```bash
-   docker tag sdp-dev-address-book-synchroniser:latest <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/sdp-dev-address-book-synchroniser:<semantic_version>
+   docker tag sdp-dev-address-book-lambda:latest <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/sdp-dev-address-book-lambda:<semantic_version>
    ```
 
-   **Please Note:** Change `sdp-dev-address-book-synchroniser` within the above command to `<env_name>-<lambda_name>`.
+   **Please Note:** Change `sdp-dev-address-book-lambda` within the above command to `<env_name>-<lambda_name>`.
 
 5. Push the image to ECR.
 
    ```bash
-   docker push <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/sdp-dev-address-book-synchroniser:<semantic_version>
+   docker push <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/sdp-dev-address-book-lambda:<semantic_version>
    ```
 
 Once pushed, you should be able to see your new image version within the ECR repository.

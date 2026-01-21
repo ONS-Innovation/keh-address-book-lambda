@@ -1,0 +1,45 @@
+# A GitHub Actions workflow to verify MkDocs documentation builds successfully
+---
+name: MkDocs CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mkdocs/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'mkdocs/**'
+
+jobs:
+
+  # TODO: Add a docs linter (i.e. Markdownlint) job here
+
+  verify-docs-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Set up cache
+        run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+      - name: Install Poetry
+        run: |
+          pip install poetry
+      - name: Install dependencies
+        run: |
+            poetry config virtualenvs.in-project true
+            poetry install --only docs
+            
+      - name: Verify MkDocs Build
+        id: build
+        run: |
+          mkdocs build -f mkdocs/mkdocs.yml
