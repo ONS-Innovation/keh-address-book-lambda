@@ -6,14 +6,16 @@ on:
   push:
     branches: [main]
     paths:
-      - 'docs/**'
+      - "docs/**"
   pull_request:
     branches: [main]
     paths:
-      - 'docs/**'
+      - "docs/**"
+
+permissions:
+  contents: read
 
 jobs:
-
   # TODO: Add a docs linter (i.e. Markdownlint) job here
 
   verify-docs-build:
@@ -26,7 +28,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Set up cache
-        run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+        run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - uses: actions/cache@v4
         with:
           key: mkdocs-material-${{ env.cache_id }}
@@ -36,9 +38,9 @@ jobs:
           pip install poetry
       - name: Install dependencies
         run: |
-            poetry config virtualenvs.in-project true
-            poetry install --only docs
-            
+          poetry config virtualenvs.in-project true
+          poetry install --only docs
+
       - name: Verify MkDocs Build
         id: build
         run: |
