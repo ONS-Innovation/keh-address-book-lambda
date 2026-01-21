@@ -1,4 +1,4 @@
-# GitHub Repository Address Book Lambda - TEST
+# GitHub Repository Address Book Lambda
 
 This site documents the Address Book Lambda that collects GitHub usernames, verified org emails, and account IDs, and writes JSON lookup files to S3 for use by Digital Landscape.
 
