@@ -44,4 +44,4 @@ jobs:
       - name: Verify MkDocs Build
         id: build
         run: |
-          mkdocs build -f mkdocs/mkdocs.yml
+          mkdocs build -f mkdocs.yml
