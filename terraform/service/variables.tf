@@ -33,13 +33,13 @@ variable "env_name" {
 variable "lambda_name" {
   description = "AWS Lambda Function Name"
   type        = string
-  default     = "keh-address-book-lambda"
+  default     = "address-book-lambda"
 }
 
 variable "lambda_version" {
   description = "AWS Lambda Image Version"
   type        = string
-  default     = "v0.0.1"
+  default     = "v1.0.0"
 }
 
 variable "lambda_arch" {
