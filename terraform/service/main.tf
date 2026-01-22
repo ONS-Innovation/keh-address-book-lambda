@@ -138,3 +138,17 @@ resource "aws_cloudwatch_log_group" "loggroup" {
   name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
   retention_in_days = var.log_retention_days
 }
+
+resource "aws_cloudwatch_metric_alarm" "error_alarm" {
+  alarm_name                = "${var.lambda_name}-error-alarm"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = 1
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 300
+  statistic                 = "Sum"
+  threshold                 = 0
+  alarm_description         = "This metric counts the number of errors that the GitHub address book Lambda function produces where if it is over 0 then an alarm is created"
+  insufficient_data_actions = []
+  treat_missing_data = "ignore"
+}
