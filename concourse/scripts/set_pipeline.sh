@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# shellcheck disable=SC2154
+
 set -eo pipefail
 # Usage: ./set_pipeline.sh
 
@@ -6,7 +9,10 @@ set -eo pipefail
 repo_name="address-book-lambda"
 
 # Always use the current branch
-branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || { echo "Failed to get branch name"; exit 1; })
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || { 
+    echo "Failed to get branch name"; 
+    exit 1; 
+})
 
 if ! git rev-parse --verify "${branch}" >/dev/null 2>&1; then
     echo "Branch \"${branch}\" does not exist. Cannot set a pipeline without a valid branch."
@@ -19,7 +25,7 @@ if [[ ${branch} == "main" || ${branch} == "master" ]]; then
 else
     # Remove non-alphanumeric characters and take the first 7 characters
     sanitized_branch=$(echo "${branch}" | tr -cd '[:alnum:]' | cut -c1-7)
-    pipeline_name=${repo_name}-${sanitized_branch}
+    pipeline_name="${repo_name}"-"${sanitized_branch}"
 fi
 
 fly -t aws-sdp set-pipeline -c concourse/ci.yml -p ${pipeline_name}  -v branch=${branch} -v repo_name=${repo_name} -v env=dev

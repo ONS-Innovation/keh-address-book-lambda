@@ -1,3 +1,7 @@
+#!/bin/sh
+
+# shellcheck disable=SC2154
+
 set -euo pipefail
 
 apk add --no-cache jq
@@ -26,11 +30,11 @@ if [[ ${env} != "prod" ]]; then
     env="dev"
 fi
 
-echo ${env}
+echo "${env}"
 
 cd resource-repo/terraform/service
 
-terraform init -backend-config=env/${env}/backend-${env}.tfbackend -reconfigure
+terraform init -backend-config=env/"${env}"/backend-"${env}".tfbackend -reconfigure
 
 # The following terraform-apply may need to change if the environment variables change
 
