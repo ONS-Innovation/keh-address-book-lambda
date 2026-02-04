@@ -281,13 +281,13 @@ chmod u+x ./concourse/scripts/set_pipeline.sh
 Note that you only have to run chmod the first time running the script in order to give permissions.
 This script will set the branch and pipeline name to whatever branch you are currently on. It will also set the image tag on ECR to 7 characters of the current branch name if running on a branch other than main. For main, the ECR tag will be the latest release tag on the repository that has semantic versioning(vX.Y.Z).
 
-The pipeline name itself will usually follow a pattern as follows: `digital-landscape-<branch-name>` for any non-main branch and `digital-landscape` for the main/master branch.
+The pipeline name itself will usually follow a pattern as follows: `address-book-lambda-<branch-name>` for any non-main branch and `address-book-lambda` for the main/master branch.
 
 #### Prod deployment
 
 To deploy to prod, it is required that a Github Release is made on Github. The release is required to follow semantic versioning of vX.Y.Z.
 
-A manual trigger is to be made on the pipeline name `digital-landscape > deploy-after-github-release` job through the Concourse CI UI. This will create a github-create-tag resource that is required on the `digital-landscape > build-and-push-prod` job. Then the prod deployment job is also through a manual trigger ensuring that prod is only deployed using the latest GitHub release tag in the form of vX.Y.Z and is manually controlled.
+A manual trigger is to be made on the pipeline name `address-book-lambda > deploy-after-github-release` job through the Concourse CI UI. This will create a github-create-tag resource that is required on the `address-book-lambda > build-and-push-prod` job. Then the prod deployment job is also through a manual trigger ensuring that prod is only deployed using the latest GitHub release tag in the form of vX.Y.Z and is manually controlled.
 
 #### Triggering a pipeline
 
