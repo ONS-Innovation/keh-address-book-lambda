@@ -15,6 +15,8 @@ github_org=$(echo "$secrets" | jq -r .github_org)
 
 s3_bucket_name=$(echo "$secrets" | jq -r .s3_bucket_name)
 
+ecr_repository=$(echo "$secrets" | jq -r .ecr_repository)
+
 export AWS_ACCESS_KEY_ID=$aws_access_key_id
 export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
 
