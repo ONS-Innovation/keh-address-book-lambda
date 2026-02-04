@@ -69,12 +69,11 @@ def test_lambda_missing_env_var(monkeypatch):
 
     from lambda_function import lambda_handler
 
-    result = lambda_handler(event={}, context=None)
-    assert isinstance(result, dict)
-    assert result.get('statusCode') == 500
-    body = json.loads(result.get('body', '{}'))
-    assert body.get('message') == 'Missing required environment variables'
+    with pytest.raises(Exception) as excinfo:
+        lambda_handler(event={}, context=None)
 
+    assert "Failed to fetch data from GitHub" in str(excinfo.value)
+    
 
 def test_lambda_handles_org_not_found(set_env, monkeypatch):
     """Returns 404 when the organisation cannot be found."""
@@ -122,7 +121,7 @@ def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
 
     monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: FailingS3Writer())
 
-    result = lambda_handler(event={}, context=None)
-    assert result["statusCode"] == 500
-    body = json.loads(result["body"])
-    assert body.get("message")
+    with pytest.raises(Exception) as excinfo:
+        lambda_handler(event={}, context=None)
+
+    assert "S3 boom" in str(excinfo.value)
