@@ -11,7 +11,7 @@ resources:
     source:
       uri: https://github.com/ONS-Innovation/keh-address-book-lambda
       username: ((github_access_token))
-      password: x-oauth-basic
+      password: x-oauth-basic # checkov:skip=CKV_SECRET_6:Checkov thinks this is a secret, but it is not
       branch: ((branch))
   - name: github-release
     type: github-release
