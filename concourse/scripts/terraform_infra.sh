@@ -10,16 +10,14 @@ aws_account_id=$(echo "$secrets" | jq -r .aws_account_id)
 aws_access_key_id=$(echo "$secrets" | jq -r .aws_access_key_id)
 aws_secret_access_key=$(echo "$secrets" | jq -r .aws_secret_access_key)
 
-service_subdomain=$(echo "$secrets" | jq -r .service_subdomain)
-domain=$(echo "$secrets" | jq -r .domain)
+lambda_name=$(echo "$secrets" | jq -r .lambda_name)
+env_name=$(echo "$secrets" | jq -r .env_name)
 
 github_app_client_id=$(echo "$secrets" | jq -r .github_app_client_id)
 aws_secret_name=$(echo "$secrets" | jq -r .aws_secret_name)
 github_org=$(echo "$secrets" | jq -r .github_org)
 
-s3_bucket_name=$(echo "$secrets" | jq -r .s3_bucket_name)
-
-ecr_repository=$(echo "$secrets" | jq -r .ecr_repository)
+aws_bucket_name=$(echo "$secrets" | jq -r .aws_bucket_name)
 
 export AWS_ACCESS_KEY_ID="$aws_access_key_id"
 export AWS_SECRET_ACCESS_KEY="$aws_secret_access_key"
@@ -42,12 +40,11 @@ terraform apply \
 	-var "aws_account_id=$aws_account_id" \
 	-var "aws_access_key_id=$aws_access_key_id" \
 	-var "aws_secret_access_key=$aws_secret_access_key" \
-	-var "domain=$domain" \
-	-var "service_subdomain=${service_subdomain}" \
+	-var "env_name=$env_name" \
+	-var "lambda_name=${lambda_name}" \
 	-var "github_app_client_id=$github_app_client_id" \
 	-var "aws_secret_name=$aws_secret_name" \
 	-var "github_org=$github_org" \
-	-var "s3_bucket_name=${s3_bucket_name}" \
-	-var "container_ver=${tag}" \
-	-var "ecr_repository=$ecr_repository" \
+	-var "aws_bucket_name=${s3_bucket_name}" \
+	-var "lambda_version=${tag}" \
 	-auto-approve
