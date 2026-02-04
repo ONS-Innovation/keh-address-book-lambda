@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to the Digital Landscape. We're happy to have you here.
+Thanks for your interest in contributing to the Address Book Lambda. We're happy to have you here.
 
 Please take a moment to review this document before submitting your first pull request. We also strongly recommend that you check for open issues and pull requests to see if someone else is working on something similar.
 
@@ -8,29 +8,39 @@ If you need any help, feel free to reach out to the development team.
 
 ## About this repository
 
-TODO:
+The Address Book Lambda is a GitHub Scraping utility designed to gather organisation users' emails for use within the [Digital Landscape](https://github.com/ONSdigital/keh-digital-landscape).
 
-- Purpose of lambda
-- How it is used in wider ONS (digiland)
+This repository contains:
+
+- Lambda code (Python)
+- Terraform (AWS infrastructure) and Concourse (automated deployment)
+- GitHub Actions (linting + formatting)
+- MkDocs (supplementary docs)
 
 ## Structure
 
-TODO:
-
-- Structure of the mkdocs
+```bash
+.
+├── .github
+│   └── workflows # GitHub Actions
+├── concourse # CICD
+├── docs # MkDocs
+├── src # Lambda definition
+├── terraform # AWS Infrastructure
+├── tests # Automated tests
+└── README.md # Getting Started
+```
 
 ## Development
 
-TODO:
+To get started with development, please see the instructions in the [README](./README.md).
 
-- "How can I help to develop in this"
+To get a further understanding of the project, we have docs available within the [`./docs` directory](./docs/) 
+or on our [MkDocs deployment](https://ons-innovation.github.io/keh-address-book-lambda/).
 
 ## Documentation
 
-TODO:
-
-- Where is documentation
-- How is documentation written
+A guide on our documentation is available within the [README](./README.md).
 
 ## Commit Convention
 
@@ -95,9 +105,9 @@ e.g. `KEH-123-patch-1`
 
 ## Testing
 
-TODO:
+All tests are available in the [`./tests` directory](./tests/).
 
-- How is testing done?
+Documentation about our tests (i.e. how to run them) is available in the [README](./README.md).
 
 ## Continuous Integration
 
