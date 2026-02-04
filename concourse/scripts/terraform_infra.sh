@@ -45,6 +45,6 @@ terraform apply \
 	-var "github_app_client_id=$github_app_client_id" \
 	-var "aws_secret_name=$aws_secret_name" \
 	-var "github_org=$github_org" \
-	-var "aws_bucket_name=${s3_bucket_name}" \
+	-var "aws_bucket_name=${aws_bucket_name}" \
 	-var "lambda_version=${tag}" \
 	-auto-approve
