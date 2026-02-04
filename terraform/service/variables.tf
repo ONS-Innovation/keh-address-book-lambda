@@ -57,7 +57,7 @@ variable "lambda_timeout" {
 variable "schedule" {
   description = "The schedule to trigger the lambda, rate(value minutes|hours|days) or cron(minutes hours day-of-month month day-of-week year)"
   type        = string
-  default     = "cron(0 6 ? * 2 *)" // every Monday at 6am
+  default     = "cron(0 6 ? * 3 *)" // every Tuesday at 6am
 }
 
 variable "log_retention_days" {
