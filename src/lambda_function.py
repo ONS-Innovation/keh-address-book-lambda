@@ -75,7 +75,9 @@ def lambda_handler(event, context):
             user_to_email, email_to_user, user_to_id = response
 
     except Exception as e:
-        raise Exception(f"Failed to fetch data from GitHub: {str(e)}. Are the environment variables set correctly?")
+        raise Exception(
+            f"Failed to fetch data from GitHub: {str(e)}. Are the environment variables set correctly?"
+        )
 
     # Serialize and write to S3
     try:
