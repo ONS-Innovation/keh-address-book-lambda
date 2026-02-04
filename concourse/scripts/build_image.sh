@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154,SC3040
 
 set -euo pipefail
 
@@ -18,4 +18,4 @@ podman tag "${container_image}":"${tag} "${aws_account_id}".dkr.ecr.eu-west-2.am
 podman push "${aws_account_id}".dkr.ecr.eu-west-2.amazonaws.com/"${container_image}":"${tag}"
 
 echo "Saving image as tar for next task..."
-podman save --format=oci-dir "${container_image}:${tag}" -o built-images/address_book_lambda.tar
+podman save --format=oci-dir "${container_image}":"${tag}" -o built-images/address_book_lambda.tar

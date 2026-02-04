@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154,SC3040
 
 set -eo pipefail
 # Usage: ./set_pipeline.sh
@@ -28,6 +28,6 @@ else
     pipeline_name="${repo_name}"-"${sanitized_branch}"
 fi
 
-fly -t aws-sdp set-pipeline -c concourse/ci.yml -p ${pipeline_name}  -v branch=${branch} -v repo_name=${repo_name} -v env=dev
+fly -t aws-sdp set-pipeline -c concourse/ci.yml -p "${pipeline_name}"  -v branch="${branch}" -v repo_name="${repo_name}" -v env=dev
 
 echo "Pipeline \"${pipeline_name}\" set successfully."

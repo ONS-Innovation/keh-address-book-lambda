@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154,SC3040
 
 set -euo pipefail
 
@@ -21,8 +21,8 @@ s3_bucket_name=$(echo "$secrets" | jq -r .s3_bucket_name)
 
 ecr_repository=$(echo "$secrets" | jq -r .ecr_repository)
 
-export AWS_ACCESS_KEY_ID=$aws_access_key_id
-export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
+export AWS_ACCESS_KEY_ID="$aws_access_key_id"
+export AWS_SECRET_ACCESS_KEY="$aws_secret_access_key"
 
 git config --global url."https://x-access-token:$github_access_token@github.com/".insteadOf "https://github.com/"
 
