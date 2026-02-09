@@ -294,13 +294,13 @@ A manual trigger is to be made on the pipeline name `address-book-lambda > deplo
 Once the pipeline has been set, you can manually trigger a dev build on the Concourse UI, or run the following command for non-main branch deployment:
 
 ```bash
-fly -t aws-sdp trigger-job -j digital-landscape-<branch-name>/build-and-push-dev
+fly -t aws-sdp trigger-job -j address-book-lambda-<branch-name>/build-and-push-dev
 ```
 
 and for main branch deployment:
 
 ```bash
-fly -t aws-sdp trigger-job -j digital-landscape/build-and-push-dev
+fly -t aws-sdp trigger-job -j address-book-lambda/build-and-push-dev
 ```
 
 #### Destroying a pipeline
@@ -308,7 +308,7 @@ fly -t aws-sdp trigger-job -j digital-landscape/build-and-push-dev
 To destroy the pipeline, run the following command:
 
 ```bash
-fly -t aws-sdp destroy-pipeline -p digital-landscape-<branch-name>
+fly -t aws-sdp destroy-pipeline -p address-book-lambda-<branch-name>
 ```
 
 **It is unlikely that you will need to destroy a pipeline, but the command is here if needed.**
