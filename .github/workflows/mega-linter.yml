@@ -9,11 +9,9 @@ name: MegaLinter
   # Comment this line to trigger action only on pull-requests
   # (not recommended if you don't pay for GH Actions)
   push:
-
+    branches: [main]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main]
 
 # Restrict default token permissions at workflow level
 permissions: read-all

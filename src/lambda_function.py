@@ -75,15 +75,9 @@ def lambda_handler(event, context):
             user_to_email, email_to_user, user_to_id = response
 
     except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps(
-                {
-                    "message": "Missing required environment variables",
-                    "error": str(e),
-                }
-            ),
-        }
+        raise Exception(
+            f"Failed to fetch data from GitHub: {str(e)}. Are the environment variables set correctly?"
+        )
 
     # Serialize and write to S3
     try:
@@ -100,12 +94,7 @@ def lambda_handler(event, context):
         )
         s3writer.write_data_to_s3(folder + id_key, json.dumps(user_to_id, indent=2))
     except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps(
-                {"message": "Failed to write data to S3", "error": str(e)}
-            ),
-        }
+        raise Exception(f"Failed to write data to S3: {str(e)}")
 
     return {
         "statusCode": 200,
