@@ -272,7 +272,7 @@ jobs:
               params:
                 aws_account_id: ((aws_account_sdp_prod))
                 aws_role_arn: arn:aws:iam::((aws_account_sdp_prod)):role/sdp-concourse-prod
-                secrets: ((sdp_prod_digital_landscape_secrets))
+                secrets: ((sdp_prod_address_book_lambda_secrets))
                 env: prod
                 tag: github-release-tag/tag
                 repo_name: ((repo_name))
