@@ -35,7 +35,7 @@ This repository contains:
 
 To get started with development, please see the instructions in the [README](./README.md).
 
-To get a further understanding of the project, we have docs available within the [`./docs` directory](./docs/) 
+To get a further understanding of the project, we have docs available within the [`./docs` directory](./docs/)
 or on our [MkDocs deployment](https://ons-innovation.github.io/keh-address-book-lambda/).
 
 ## Documentation
