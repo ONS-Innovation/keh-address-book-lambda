@@ -10,6 +10,7 @@ def test_lambda_valid(monkeypatch):
     """Processes a valid event, writes to S3, returns 200."""
     # Ensure AWS clients are stubbed so handler doesn't raise early
     monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+
     class GitHubServices:
         def __init__(self):
             self.calls = 0
@@ -24,6 +25,7 @@ def test_lambda_valid(monkeypatch):
 
     class S3WriterStub:
         """Capture S3 writes for verification."""
+
         def __init__(self):
             self.call_args_list = []
 
@@ -40,9 +42,9 @@ def test_lambda_valid(monkeypatch):
     result = lambda_handler(event={}, context=None)
 
     assert isinstance(result, dict)
-    assert result.get('statusCode') == 200
-    body = json.loads(result.get('body', '{}'))
-    assert body.get('message')
+    assert result.get("statusCode") == 200
+    body = json.loads(result.get("body", "{}"))
+    assert body.get("message")
     assert services_stub.calls == 1
 
     assert len(s3writer_stub.call_args_list) == 3
@@ -73,22 +75,29 @@ def test_lambda_missing_env_var(monkeypatch):
         lambda_handler(event={}, context=None)
 
     assert "Failed to fetch data from GitHub" in str(excinfo.value)
-    
+
 
 def test_lambda_handles_org_not_found(set_env, monkeypatch):
     """Returns 404 when the organisation cannot be found."""
     monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
 
     class FakeServices:
-        def __init__(self, *args, **kwargs): pass
+        def __init__(self, *args, **kwargs):
+            pass
+
         def get_all_user_details(self):
             return ("NotFound", "Organisation 'test-org not found or inaccessible'")
 
-    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
+    monkeypatch.setattr(
+        "lambda_function.GitHubServices", lambda *a, **k: FakeServices()
+    )
 
     class FakeS3Writer:
-        def __init__(self, *args, **kwargs): pass
-        def write_data_to_s3(self, *args, **kwargs): pass
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def write_data_to_s3(self, *args, **kwargs):
+            pass
 
     monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: FakeS3Writer())
 
@@ -104,7 +113,9 @@ def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
     monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
 
     class FakeServices:
-        def __init__(self, *args, **kwargs): pass
+        def __init__(self, *args, **kwargs):
+            pass
+
         def get_all_user_details(self):
             return (
                 {"alice": "alice@ons.gov.uk"},
@@ -112,10 +123,14 @@ def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
                 {"alice": 101},
             )
 
-    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: FakeServices())
+    monkeypatch.setattr(
+        "lambda_function.GitHubServices", lambda *a, **k: FakeServices()
+    )
 
     class FailingS3Writer:
-        def __init__(self, *args, **kwargs): pass
+        def __init__(self, *args, **kwargs):
+            pass
+
         def write_data_to_s3(self, *args, **kwargs):
             raise RuntimeError("S3 boom")
 

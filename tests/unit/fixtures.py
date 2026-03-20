@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def logger_spy():
     class LoggerSpy:
@@ -29,10 +30,10 @@ def s3_client():
     class FakeS3Client:
         def __init__(self, **kwargs):
             pass
-        
+
         def put_object(self, **kwargs):
             raise Exception
-        
+
     return FakeS3Client()
 
 
@@ -41,7 +42,7 @@ def secret_manager_valid():
     class SecretManagerValid:
         def get_secret_value(self, SecretId):
             return {"SecretString": "FAKE_PEM_CONTENT"}
-        
+
     return SecretManagerValid()
 
 
@@ -50,9 +51,9 @@ def secret_manager_empty():
     class SecretManagerEmpty:
         def get_secret_value(self, SecretId):
             return {"SecretString": ""}
-        
+
     return SecretManagerEmpty()
-    
+
 
 @pytest.fixture
 def set_env(monkeypatch):

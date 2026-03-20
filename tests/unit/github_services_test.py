@@ -13,8 +13,7 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
         assert pem == "FAKE_PEM_CONTENT"
         assert app_client_id == "12345"
         return ("token123", "inst1")
-    
-    
+
     class FakeResponse:
         def json(self):
             """Fake response."""
@@ -23,7 +22,7 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
                     "organization": {
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
-                            "nodes": []
+                            "nodes": [],
                         }
                     }
                 }
@@ -34,16 +33,23 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
             """Recreate GraphQL request; returns FakeResponse."""
             return FakeResponse()
 
-
-    monkeypatch.setattr(github_services.github_api_toolkit, "get_token_as_installation", fake_get_token_as_installation)
-    monkeypatch.setattr(github_services.github_api_toolkit, "github_graphql_interface", lambda token: FakeQL(),)
+    monkeypatch.setattr(
+        github_services.github_api_toolkit,
+        "get_token_as_installation",
+        fake_get_token_as_installation,
+    )
+    monkeypatch.setattr(
+        github_services.github_api_toolkit,
+        "github_graphql_interface",
+        lambda token: FakeQL(),
+    )
 
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
         secret_manager=secret_manager_valid,
         secret_name="test-secret",
-        app_client_id="12345"
+        app_client_id="12345",
     )
 
     assert isinstance(services.ql, FakeQL)
@@ -66,7 +72,9 @@ def test_missing_secret(logger_spy, secret_manager_empty):
     assert "Secret test-secret not found in AWS Secret Manager" in msg
 
     assert len(logger_spy.all_calls) == 1
-    assert "Secret test-secret not found in AWS Secret Manager" in logger_spy.all_calls[0]
+    assert (
+        "Secret test-secret not found in AWS Secret Manager" in logger_spy.all_calls[0]
+    )
 
 
 def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
@@ -92,7 +100,10 @@ def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
         )
 
     assert str(exc.value) == "failure"
-    assert any("Failed to retrieve GitHub App installation token" in m for m in logger_spy.all_calls)
+    assert any(
+        "Failed to retrieve GitHub App installation token" in m
+        for m in logger_spy.all_calls
+    )
 
 
 def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
@@ -108,6 +119,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeResponse1:
         """First page payload with pagination cursor."""
+
         def json(self):
             return {
                 "data": {
@@ -115,7 +127,14 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": True, "endCursor": "CUR1"},
                             "nodes": [
-                                {"login": "alice", "databaseId": 101, "organizationVerifiedDomainEmails": ["a@org.com", "a2@org.com"]}
+                                {
+                                    "login": "alice",
+                                    "databaseId": 101,
+                                    "organizationVerifiedDomainEmails": [
+                                        "a@org.com",
+                                        "a2@org.com",
+                                    ],
+                                }
                             ],
                         }
                     }
@@ -124,6 +143,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeResponse2:
         """Second page payload; end of pagination."""
+
         def json(self):
             return {
                 "data": {
@@ -131,7 +151,11 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
                             "nodes": [
-                                {"login": "bob", "databaseId": 202, "organizationVerifiedDomainEmails": ["b@org.com"]}
+                                {
+                                    "login": "bob",
+                                    "databaseId": 202,
+                                    "organizationVerifiedDomainEmails": ["b@org.com"],
+                                }
                             ],
                         }
                     }
@@ -192,7 +216,10 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
                             "nodes": [
-                                {"login": "alice", "organizationVerifiedDomainEmails": []}
+                                {
+                                    "login": "alice",
+                                    "organizationVerifiedDomainEmails": [],
+                                }
                             ],
                         }
                     }
@@ -219,12 +246,15 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
     )
 
     user_to_email, email_to_user, user_to_id = services.get_all_user_details()
-    
+
     assert user_to_email == {}
     assert email_to_user == {}
     assert user_to_id == {}
 
-    assert any("Skipping member 'alice' with no verified domain emails" in m for m in logger_spy.all_calls)
+    assert any(
+        "Skipping member 'alice' with no verified domain emails" in m
+        for m in logger_spy.all_calls
+    )
 
 
 def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
@@ -238,6 +268,7 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
 
     class FakeResponse:
         """Fake response payload lacking username."""
+
         def json(self):
             return {
                 "data": {
@@ -245,7 +276,10 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
                         "membersWithRole": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
                             "nodes": [
-                                {"login": "", "organizationVerifiedDomainEmails": ["a@123.com"]}
+                                {
+                                    "login": "",
+                                    "organizationVerifiedDomainEmails": ["a@123.com"],
+                                }
                             ],
                         }
                     }
@@ -272,17 +306,17 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     )
 
     user_to_email, email_to_user, user_to_id = services.get_all_user_details()
-    
+
     assert user_to_email == {}
     assert email_to_user == {}
     assert user_to_id == {}
 
     assert any("Skipping member with empty username" in m for m in logger_spy.all_calls)
-    
+
 
 def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_valid):
     """Handles missing organisation in GraphQL response."""
-    
+
     monkeypatch.setattr(
         github_services.github_api_toolkit,
         "get_token_as_installation",
@@ -316,4 +350,7 @@ def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_val
     result = services.get_all_user_details()
     assert result[0] == "NotFound"
     assert "Organisation 'test-org not found or inaccessible'" in result[1]
-    assert any("Organisation 'test-org not found or inaccessible'" in m for m in logger_spy.all_calls)
+    assert any(
+        "Organisation 'test-org not found or inaccessible'" in m
+        for m in logger_spy.all_calls
+    )
