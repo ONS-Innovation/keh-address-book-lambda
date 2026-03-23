@@ -1,5 +1,6 @@
 from logger import wrapped_logging
 
+
 class TestWrappedLogging:
 
     def test_log_info(self, caplog):
