@@ -148,6 +148,11 @@ resource "aws_iam_role_policy_attachment" "eventbridge_policy" {
   policy_arn = aws_iam_policy.lambda_eventbridge_policy.arn
 }
 
+resource "aws_cloudwatch_log_group" "loggroup" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
+  retention_in_days = var.log_retention_days
+}
+
 resource "aws_cloudwatch_metric_alarm" "error_alarm" {
   alarm_name                = "${var.lambda_name}-error-alarm"
   comparison_operator       = "GreaterThanThreshold"
