@@ -19,7 +19,7 @@ jwt = ">=1.4.0,<2.0.0"
 github-api-toolkit = { git = "https://github.com/ONS-Innovation/github-api-package.git", rev = "v2.0.3" }
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
+pytest = "^9.0.0"
 ruff = "^0.14.8"
 flake8 = "^7.3.0"
 pyflakes = "^3.4.0"
