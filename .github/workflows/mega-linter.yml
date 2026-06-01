@@ -54,7 +54,7 @@ jobs:
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           # Credentials need to persist so git-auto-commit-action 
-          # can push linter fix commits back to the branch.
+          # can push linter fix commits back to the branch (L195).
           persist-credentials: true
 
           # If you use VALIDATE_ALL_CODEBASE = true, you can remove this line to
