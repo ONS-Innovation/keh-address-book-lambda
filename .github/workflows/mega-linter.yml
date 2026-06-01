@@ -50,13 +50,12 @@ jobs:
     steps:
       # Git Checkout
       - name: Checkout Code
-        # zizmor: ignore[artipacked] - persist-credentials is intentionally not
-        # set here as the credential is required by git-auto-commit-action to
-        # push linter fix commits back to the branch (in practice, this is not
-        # used as the PAT is not set)
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          # Credentials need to persist so git-auto-commit-action 
+          # can push linter fix commits back to the branch.
+          persist-credentials: true
 
           # If you use VALIDATE_ALL_CODEBASE = true, you can remove this line to
           # improve performance
