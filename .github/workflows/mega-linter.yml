@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          # Credentials need to persist so git-auto-commit-action 
+          # Credentials need to persist so git-auto-commit-action
           # can push linter fix commits back to the branch (L195).
           persist-credentials: true
 
