@@ -37,7 +37,7 @@ This allows [Digital Landscape's](https://github.com/ONSdigital/keh-digital-land
     - [Why do I get an S3 permissions error when writing outputs?](#why-do-i-get-an-s3-permissions-error-when-writing-outputs)
     - [Why are some users missing email addresses in the outputs?](#why-are-some-users-missing-email-addresses-in-the-outputs)
     - [How do I run locally and see logs?](#how-do-i-run-locally-and-see-logs)
-    - [MkDocs won’t serve or pages 404 locally.](#mkdocs-wont-serve-or-pages-404-locally)
+    - [MkDocs won’t serve or pages 404 locally](#mkdocs-wont-serve-or-pages-404-locally)
     - [Where are the outputs written?](#where-are-the-outputs-written)
 
 ## Prerequisites
@@ -115,7 +115,7 @@ To work on this project, you need to:
    make install-dev
    ```
 
-To run the project during development, we recommend you [run the project outside of a container](#outside-of-a-container-development-only)
+To run the project during development, we recommend you [run the project outside of a container](#outside-of-a-container-recommended-development-only) for easier debugging and faster iteration.
 
 ## Running the Project
 
@@ -549,7 +549,7 @@ To lint and test locally, you need to:
 
 - Export the required environment variables (see above) and run the handler locally.
 
-### MkDocs won’t serve or pages 404 locally.
+### MkDocs won’t serve or pages 404 locally
 
 - Run `make install-docs` first, then `make docs-serve`. Verify `mkdocs.yml` nav matches files under `docs/`.
 

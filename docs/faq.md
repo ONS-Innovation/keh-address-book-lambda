@@ -25,7 +25,7 @@ Below are common questions and quick fixes when using the Address Book Lambda.
 
 ## Documentation (MkDocs)
 
-### `make mkdocs-serve` fails or pages 404.
+### `make mkdocs-serve` fails or pages 404
 
 - The target is `docs-serve`, not `mkdocs-serve`. Also ensure `mkdocs.yml` nav matches files in `docs/`.
 
