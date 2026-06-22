@@ -225,7 +225,7 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    When running the container, you are required to pass some environment variables:
 
    | Variable                 | Description                                                                               |
-   | ------------------------ | ----------------------------------------------------------------------------------------- |
+   |--------------------------|-------------------------------------------------------------------------------------------|
    | GITHUB_ORG               | The organisation you would like to run the tool in.                                       |
    | GITHUB_APP_CLIENT_ID     | The Client ID for the GitHub App which the tool uses to authenticate with the GitHub API. |
    | GITHUB_APP_ID            | Numeric ID of the GitHub App used for authentication.                                     |
