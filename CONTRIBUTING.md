@@ -70,7 +70,7 @@ the following categories:
   e.g. `feat(components): add new prop to the avatar component`
 
 If you are interested in the detailed specification you can visit
-https://www.conventionalcommits.org/ or check out the
+<https://www.conventionalcommits.org/> or check out the
 [Angular Commit Message Guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines).
 
 ## Pull Request Template

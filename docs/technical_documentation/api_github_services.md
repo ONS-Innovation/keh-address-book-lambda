@@ -23,18 +23,18 @@ logger = wrapped_logging(False)
 sm = boto3.client("secretsmanager")
 
 svc = GitHubServices(
-	org="<org>",
-	logger=logger,
-	secret_manager=sm,
-	secret_name="<aws_secret_name>",
-	app_client_id="<github_app_client_id>",
+ org="<org>",
+ logger=logger,
+ secret_manager=sm,
+ secret_name="<aws_secret_name>",
+ app_client_id="<github_app_client_id>",
 )
 
 result = svc.get_all_user_details()
 if isinstance(result, tuple) and result[0] == "NotFound":
-	logger.log_error(f"Org issue: {result[1]}")
+ logger.log_error(f"Org issue: {result[1]}")
 else:
-	user_to_email, email_to_user, user_to_id = result
+ user_to_email, email_to_user, user_to_id = result
 ```
 
 ## Notes
