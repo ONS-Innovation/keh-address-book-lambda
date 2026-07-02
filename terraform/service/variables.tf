@@ -83,6 +83,17 @@ variable "region" {
   default     = "eu-west-2"
 }
 
+variable "ecr_repository" {
+  description = "Name of the ECR repository containing the Lambda image"
+  type        = string
+}
+
+variable "container_ver" {
+  description = "Container tag"
+  type        = string
+  default     = "v1.0.0"
+}
+
 variable "project_tag" {
   description = "Project"
   type        = string
