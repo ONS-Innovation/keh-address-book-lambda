@@ -36,12 +36,6 @@ variable "lambda_name" {
   default     = "address-book-lambda"
 }
 
-variable "lambda_version" {
-  description = "AWS Lambda Image Version"
-  type        = string
-  default     = "v1.0.0"
-}
-
 variable "lambda_arch" {
   description = "AWS Lambda Architecture"
   type        = string
