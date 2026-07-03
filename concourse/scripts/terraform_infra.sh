@@ -47,6 +47,5 @@ terraform apply \
 	-var "aws_secret_name=$aws_secret_name" \
 	-var "github_org=$github_org" \
 	-var "aws_bucket_name=${aws_bucket_name}" \
-	-var "lambda_version=${tag}" \
 	-var "ecr_repository=${ecr_repository}" \
 	-auto-approve
