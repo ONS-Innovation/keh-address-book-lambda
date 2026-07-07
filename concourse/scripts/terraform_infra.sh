@@ -12,6 +12,7 @@ aws_secret_access_key=$(echo "$secrets" | jq -r .aws_secret_access_key)
 
 lambda_name=$(echo "$secrets" | jq -r .lambda_name)
 env_name=$(echo "$secrets" | jq -r .env_name)
+ecr_repository=$(echo "$secrets" | jq -r .ecr_repository)
 
 github_app_client_id=$(echo "$secrets" | jq -r .github_app_client_id)
 aws_secret_name=$(echo "$secrets" | jq -r .aws_secret_name)
@@ -46,5 +47,5 @@ terraform apply \
 	-var "aws_secret_name=$aws_secret_name" \
 	-var "github_org=$github_org" \
 	-var "aws_bucket_name=${aws_bucket_name}" \
-	-var "lambda_version=${tag}" \
+	-var "ecr_repository=${ecr_repository}" \
 	-auto-approve
