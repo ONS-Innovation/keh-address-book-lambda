@@ -48,4 +48,5 @@ terraform apply \
 	-var "github_org=$github_org" \
 	-var "aws_bucket_name=${aws_bucket_name}" \
 	-var "ecr_repository=${ecr_repository}" \
+	-var "container_ver=${tag}" \
 	-auto-approve
