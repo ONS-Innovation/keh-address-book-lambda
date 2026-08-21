@@ -98,6 +98,6 @@ variable "business_owner_tag" {
 
 locals {
   aws_account_id = data.aws_caller_identity.current.account_id
-  lambda_repo = "${var.env_name}-${var.lambda_name}"
-  bucket_name = "${var.env_name}-${var.aws_bucket_name}"
+  lambda_repo    = "${var.env_name}-${var.lambda_name}"
+  bucket_name    = "${var.env_name}-${var.aws_bucket_name}"
 }
