@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: keh-address-book-lambda
+  description: Weekly AWS Lambda that retrieves ONS Digital GitHub usernames and verified email addresses for the Digital Landscape address book.
+  annotations:
+    github.com/project-slug: ONS-Innovation/keh-address-book-lambda
+  tags:
+    - python
+    - aws-lambda
+    - aws-eventbridge
+  links:
+    - url: https://ons-innovation.github.io/keh-address-book-lambda
+      title: Address Book Lambda Documentation
+    - url: mailto:knowledge.exchange.hub@ons.gov.uk
+      title: Contact
+spec:
+  type: service
+  lifecycle: production
+  owner: keh-dev
