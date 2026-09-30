@@ -19,7 +19,7 @@ printf '%s' "${github_access_token}" >"$tmp_token_file"
 # Build the container image using the GitHub token as a secret
 podman build \
 	--secret id=github_token,src="$tmp_token_file" \
-    -t "${container_image}":"${tag}" resource-repo/
+	-t "${container_image}":"${tag}" resource-repo/
 
 # Remove token file after build 
 rm -f "$tmp_token_file"
