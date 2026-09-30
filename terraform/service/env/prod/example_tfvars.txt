@@ -1,5 +1,7 @@
 # Do NOT commit the real tfvars file to GitHub
-aws_secret_name         = "path-to-pem"
+github_client_id_secret_name    = "path-to-github-client-id"
+github_private_key_secret_name = "path-to-github-private-key"
+alert_secret_name              = "path-to-teams-alert-credentials"
 env_name                = "sdp-prod"
 lambda_name             = "address-book-lambda"
 lambda_arch             = "x86_64"
@@ -7,6 +9,5 @@ lambda_timeout          = 30
 lambda_memory           = 128
 schedule                = "cron(0 6 ? * 3 *)"
 github_org              = "ONSdigital"
-github_app_client_id    = "123456789"
 ecr_repository          = "sdp-dev-address-book-lambda"
 container_ver           = "v1.0.0"
