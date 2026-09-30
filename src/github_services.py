@@ -42,7 +42,7 @@ class GitHubServices:
     def get_access_token(
         self, github_client_id: str, github_private_key: str
     ) -> Tuple[str, str]:
-        """Gets the access token from the AWS Secret Manager.
+        """Gets the access token for the GitHub App installation.
 
         Args:
             github_client_id (str): The GitHub Client ID.
@@ -53,7 +53,7 @@ class GitHubServices:
             Exception: if GitHub app installation token is not found
 
         Returns:
-            str: GitHub token.
+            Tuple[str, str]: GitHub token and its expiration time.
         """
         if not github_private_key:
             error_message = (
