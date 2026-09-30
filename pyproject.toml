@@ -14,9 +14,7 @@ python = ">=3.12"
 boto3 = ">=1.43.4,<2.0.0"
 python-dotenv = ">=1.2.2,<2.0.0"
 requests = ">=2.33.0,<3.0.0"
-# Note: The project currently depends on the 'jwt' package (not PyJWT).
 github-api-package = {git = "https://github.com/ONS-Innovation/github-api-package", rev = "v3.0.0"}
-keh-teams-alert = {git = "https://github.com/ONS-Innovation/keh-teams-alert", rev = "v1.0.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"
@@ -32,6 +30,12 @@ black = "^26.3.1"
 mkdocs = "^1.6.1"
 mkdocs-material = "^9.6.15"
 mkdocstrings-python = "^1.16.12"
+
+[tool.poetry.group.alerts]
+optional = true
+
+[tool.poetry.group.alerts.dependencies]
+keh-teams-alert = {git = "https://github.com/ONS-Innovation/keh-teams-alert", rev = "v1.0.0"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

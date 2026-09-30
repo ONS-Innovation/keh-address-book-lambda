@@ -32,7 +32,7 @@ RUN --mount=type=secret,id=github_token \
 	pip install --no-cache-dir poetry==1.8.3 && \
 	poetry config virtualenvs.create false && \
 	poetry lock --no-update --no-interaction || poetry lock --no-interaction && \
-	poetry install --no-root --without dev --no-interaction; \
+	poetry install --no-root --without dev --with alerts --no-interaction; \
     rm -f /root/.gitconfig 2>/dev/null || true
 
 # Copy function code to task root so top-level imports work
