@@ -4,19 +4,20 @@ version = "0.1.0"
 description = "AWS Lambda for address book data writes"
 authors = [{ name = "ONSDigital/keh-dev" }]
 readme = "README.md"
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.12"
 
 [tool.poetry]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.14"
+python = ">=3.12"
 boto3 = ">=1.43.4,<2.0.0"
 python-dotenv = ">=1.2.2,<2.0.0"
 requests = ">=2.33.0,<3.0.0"
 # Note: The project currently depends on the 'jwt' package (not PyJWT).
 jwt = ">=1.4.0,<2.0.0"
-github-api-toolkit = { git = "https://github.com/ONS-Innovation/github-api-package.git", rev = "v2.0.3" }
+github-api-package = {git = "https://github.com/ONS-Innovation/github-api-package", rev = "v3.0.0"}
+keh-teams-alert = {git = "https://github.com/ONS-Innovation/keh-teams-alert", rev = "v1.0.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"

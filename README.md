@@ -153,13 +153,23 @@ To run the Lambda function outside of a container, we need to execute the `lambd
 
    ```bash
    export AWS_REGION=eu-west-2
-   export AWS_SECRET_NAME=<secret_name>
    export S3_BUCKET_NAME=<bucket_name>
    export GITHUB_ORG=<org>
-   export GITHUB_APP_CLIENT_ID=<client_id>
-   export GITHUB_APP_ID=<app_id>
-   export GITHUB_APP_CLIENT_SECRET=<app_client_secret>
+   export GITHUB_CLIENT_ID_SECRET_NAME=<github_client_id_secret_name>
+   export GITHUB_PRIVATE_KEY_SECRET_NAME=<github_private_key_secret_name>
+   export ALERT_SECRET_NAME=<alert_secret_name>
    ```
+
+   Variable Descriptions:
+
+   | Variable                 | Description                                                                               |
+   | ------------------------ | ----------------------------------------------------------------------------------------- |
+   | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                     |
+   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to.                    |
+   | GITHUB_ORG               | The organisation you would like to run the tool in.                                       |
+   | GITHUB_CLIENT_ID_SECRET_NAME | The name of the AWS Secrets Manager secret containing the GitHub Client ID.                |
+   | GITHUB_PRIVATE_KEY_SECRET_NAME | The name of the AWS Secrets Manager secret containing the GitHub Private Key.       |
+   | ALERT_SECRET_NAME        | The name of the AWS Secrets Manager secret containing the Azure alert credentials.   |
 
 4. Run the script.
 
@@ -215,24 +225,14 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    -e AWS_REGION=eu-west-2 \
    -e AWS_SECRET_NAME=<secret_name> \
    -e GITHUB_ORG=<org> \
-   -e GITHUB_APP_ID=<app_id> \
-   -e GITHUB_APP_CLIENT_ID=<client_id> \
+   -e GITHUB_CLIENT_ID_SECRET_NAME=<github_client_id_secret_name> \
+   -e GITHUB_PRIVATE_KEY_SECRET_NAME=<github_private_key_secret_name> \
    -e S3_BUCKET_NAME=<bucket_name> \
-   -e GITHUB_APP_CLIENT_SECRET=<app_client_secret> \
+   -e ALERT_SECRET_NAME=<alert_secret_name> \
    address-book-lambda
    ```
 
-   When running the container, you are required to pass some environment variables:
-
-   | Variable                 | Description                                                                               |
-   | ------------------------ | ----------------------------------------------------------------------------------------- |
-   | GITHUB_ORG               | The organisation you would like to run the tool in.                                       |
-   | GITHUB_APP_CLIENT_ID     | The Client ID for the GitHub App which the tool uses to authenticate with the GitHub API. |
-   | GITHUB_APP_ID            | Numeric ID of the GitHub App used for authentication.                                     |
-   | GITHUB_APP_CLIENT_SECRET | Client secret for the GitHub App OAuth authentication.                                    |
-   | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                     |
-   | AWS_SECRET_NAME          | Name of the AWS Secrets Manager secret to retrieve.                                       |
-   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to.                    |
+   For details on what each variable is for, see the above table.
 
    Once the container is running, a local endpoint is created at `localhost:9000/2015-03-31/functions/function/invocations`.
 
