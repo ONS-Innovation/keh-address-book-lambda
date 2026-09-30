@@ -15,7 +15,6 @@ boto3 = ">=1.43.4,<2.0.0"
 python-dotenv = ">=1.2.2,<2.0.0"
 requests = ">=2.33.0,<3.0.0"
 # Note: The project currently depends on the 'jwt' package (not PyJWT).
-jwt = ">=1.4.0,<2.0.0"
 github-api-package = {git = "https://github.com/ONS-Innovation/github-api-package", rev = "v3.0.0"}
 keh-teams-alert = {git = "https://github.com/ONS-Innovation/keh-teams-alert", rev = "v1.0.0"}
 
