@@ -223,7 +223,6 @@ Before the doing the following, make sure your Daemon is running. If using Colim
    -v ~/.aws:/root/.aws \
    -e AWS_PROFILE=keh-address-book-lambda \
    -e AWS_REGION=eu-west-2 \
-   -e AWS_SECRET_NAME=<secret_name> \
    -e GITHUB_ORG=<org> \
    -e GITHUB_CLIENT_ID_SECRET_NAME=<github_client_id_secret_name> \
    -e GITHUB_PRIVATE_KEY_SECRET_NAME=<github_private_key_secret_name> \
@@ -302,6 +301,8 @@ Note that you only have to run chmod the first time running the script in order 
 This script will set the branch and pipeline name to whatever branch you are currently on. It will also set the image tag on ECR to 7 characters of the current branch name if running on a branch other than main. For main, the ECR tag will be the latest release tag on the repository that has semantic versioning(vX.Y.Z).
 
 The pipeline name itself will usually follow a pattern as follows: `address-book-lambda-<branch-name>` for any non-main branch and `address-book-lambda` for the main/master branch.
+
+The Concourse variable-store entries `sdp_dev_address_book_lambda_secrets` and `sdp_prod_address_book_lambda_secrets` must include `github_client_id_secret_name`, `github_private_key_secret_name`, and `alert_secret_name`, containing the names of the corresponding AWS Secrets Manager secrets. Keep the existing `lambda_name`, `env_name`, `ecr_repository`, `github_org`, and `aws_bucket_name` fields as well.
 
 #### Prod deployment
 
