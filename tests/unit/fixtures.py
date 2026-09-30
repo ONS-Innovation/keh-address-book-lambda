@@ -58,5 +58,7 @@ def secret_manager_empty():
 @pytest.fixture
 def set_env(monkeypatch):
     monkeypatch.setenv("GITHUB_ORG", "test-org")
-    monkeypatch.setenv("AWS_SECRET_NAME", "test-secret")
-    monkeypatch.setenv("GITHUB_APP_CLIENT_ID", "12345")
+    monkeypatch.setenv("S3_BUCKET_NAME", "test-bucket")
+    monkeypatch.setenv("GITHUB_CLIENT_ID_SECRET_NAME", "github-client-id")
+    monkeypatch.setenv("GITHUB_PRIVATE_KEY_SECRET_NAME", "github-private-key")
+    monkeypatch.setenv("ALERT_SECRET_NAME", "alert-secret")

@@ -40,6 +40,30 @@ def test_writes_to_s3_success(logger_spy):
     assert logger_spy.errors == []
 
 
+def test_writes_string_to_s3(logger_spy):
+    """Uploads a string payload without converting it to JSON first."""
+    captured = {}
+
+    class FakeS3Client:
+        def put_object(self, **kwargs):
+            captured.update(kwargs)
+
+    writer = S3Writer(
+        logger=logger_spy, s3_client=FakeS3Client(), bucket_name="my-bucket"
+    )
+
+    writer.write_data_to_s3("test.txt", "plain text")
+
+    assert captured["Body"] == b"plain text"
+    assert captured["Key"] == "test.txt"
+
+
+def test_empty_bucket_name_raises(logger_spy):
+    """Rejects an empty bucket name during writer initialization."""
+    with pytest.raises(ValueError, match="S3_BUCKET_NAME environment variable"):
+        S3Writer(logger=logger_spy, s3_client=object(), bucket_name="")
+
+
 def test_writes_to_s3_error_logs(logger_spy):
     """Logs an error and raises when the S3 upload fails."""
 

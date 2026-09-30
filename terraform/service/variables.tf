@@ -1,5 +1,15 @@
-variable "aws_secret_name" {
-  description = "The path to the AWS Secret Manager resource which contains the Github App .pem file"
+variable "github_client_id_secret_name" {
+  description = "The AWS Secrets Manager secret containing the GitHub App client ID"
+  type        = string
+}
+
+variable "github_private_key_secret_name" {
+  description = "The AWS Secrets Manager secret containing the GitHub App private key"
+  type        = string
+}
+
+variable "alert_secret_name" {
+  description = "The AWS Secrets Manager secret containing Teams alert credentials and configuration"
   type        = string
 }
 
@@ -49,11 +59,6 @@ variable "github_org" {
   description = "Github Organisation"
   type        = string
   default     = "ONS-Innovation"
-}
-
-variable "github_app_client_id" {
-  description = "Github App Client ID"
-  type        = string
 }
 
 variable "lambda_memory" {
