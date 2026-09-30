@@ -211,6 +211,7 @@ jobs:
                 env: dev
                 tag: github-release-tag/tag # Use the release tag from the resource
                 repo_name: ((repo_name))
+                github_access_token: ((github_access_token))
               run:
                 path: sh
                 args:
@@ -281,6 +282,7 @@ jobs:
                 tag: github-release-tag/tag
                 repo_name: ((repo_name))
                 branch: ((branch))
+                github_access_token: ((github_access_token))
               run:
                 path: sh
                 args:
