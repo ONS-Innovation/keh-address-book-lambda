@@ -162,14 +162,14 @@ To run the Lambda function outside of a container, we need to execute the `lambd
 
    Variable Descriptions:
 
-   | Variable                 | Description                                                                               |
-   | ------------------------ | ----------------------------------------------------------------------------------------- |
-   | AWS_REGION               | The AWS Region which the Secret Manager Secret is in.                                     |
-   | S3_BUCKET_NAME           | The name of the S3 bucket the Lambda writes AddressBook JSON files to.                    |
-   | GITHUB_ORG               | The organisation you would like to run the tool in.                                       |
-   | GITHUB_CLIENT_ID_SECRET_NAME | The name of the AWS Secrets Manager secret containing the GitHub Client ID.                |
-   | GITHUB_PRIVATE_KEY_SECRET_NAME | The name of the AWS Secrets Manager secret containing the GitHub Private Key.       |
-   | ALERT_SECRET_NAME        | The name of the AWS Secrets Manager secret containing the Azure alert credentials.   |
+   | Variable                       | Description                                                                        |
+   | ------------------------------ | ---------------------------------------------------------------------------------- |
+   | AWS_REGION                     | The AWS Region which the Secret Manager Secret is in.                              |
+   | S3_BUCKET_NAME                 | The name of the S3 bucket the Lambda writes AddressBook JSON files to.             |
+   | GITHUB_ORG                     | The organisation you would like to run the tool in.                                |
+   | GITHUB_CLIENT_ID_SECRET_NAME   | The name of the AWS Secrets Manager secret containing the GitHub Client ID.        |
+   | GITHUB_PRIVATE_KEY_SECRET_NAME | The name of the AWS Secrets Manager secret containing the GitHub Private Key.      |
+   | ALERT_SECRET_NAME              | The name of the AWS Secrets Manager secret containing the Azure alert credentials. |
 
 4. Run the script.
 

@@ -14,11 +14,11 @@ aws ecr get-login-password --region eu-west-2 | podman --storage-driver=vfs logi
 # Write token to a temp file and mount as a build secret (only used when needed)
 tmp_token_file="$(mktemp)"
 chmod 600 "$tmp_token_file"
-printf '%s' "${github_access_token}" > "$tmp_token_file"
+printf '%s' "${github_access_token}" >"$tmp_token_file"
 
 # Build the container image using the GitHub token as a secret
 podman build \
-    --secret id=github_token,src="$tmp_token_file" \
+	--secret id=github_token,src="$tmp_token_file" \
     -t "${container_image}":"${tag}" resource-repo/
 
 # Remove token file after build 
