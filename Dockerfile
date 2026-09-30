@@ -21,10 +21,19 @@ COPY pyproject.toml poetry.lock ${LAMBDA_TASK_ROOT}/
 
 # Install the dependencies
 WORKDIR ${LAMBDA_TASK_ROOT}
-RUN pip install --no-cache-dir poetry==1.8.3 && \
+
+# Github token needed to install Github private dependencies, then token deleted.
+RUN --mount=type=secret,id=github_token \
+    set -e; \
+    if [ -f /run/secrets/github_token ]; then \
+      GITHUB_TOKEN="$(cat /run/secrets/github_token)"; \
+      git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"; \
+    fi; \
+	pip install --no-cache-dir poetry==1.8.3 && \
 	poetry config virtualenvs.create false && \
 	poetry lock --no-update --no-interaction || poetry lock --no-interaction && \
-	poetry install --no-root --without dev --no-interaction
+	poetry install --no-root --without dev --no-interaction; \
+    rm -f /root/.gitconfig 2>/dev/null || true
 
 # Copy function code to task root so top-level imports work
 COPY src/ ${LAMBDA_TASK_ROOT}/
