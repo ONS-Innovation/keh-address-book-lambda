@@ -40,6 +40,8 @@ def lambda_handler(event, context):
     github_private_key_secret_name = os.getenv("GITHUB_PRIVATE_KEY_SECRET_NAME")
     alert_secret_name = os.getenv("ALERT_SECRET_NAME")
 
+    environment = os.getenv("ENVIRONMENT", "local")
+
     # Validate environment variables are set
     if not org:
         raise Exception("GITHUB_ORG environment variable not set")
@@ -135,7 +137,7 @@ def lambda_handler(event, context):
             webhook_url=azure_webhook_url,
             payload={
                 "channel": channel_id,
-                "message": f"<b>Address Book Error 🚨</b><br>Failed to fetch data from GitHub: {str(e)}. Are the environment variables set correctly?",
+                "message": f"<b>{environment} Address Book Error 🚨</b><br>Failed to fetch data from GitHub: {str(e)}. Are the environment variables set correctly?",
             },
         )
         raise Exception(
@@ -161,7 +163,7 @@ def lambda_handler(event, context):
             webhook_url=azure_webhook_url,
             payload={
                 "channel": channel_id,
-                "message": f"<b>Address Book Error 🚨</b><br>Failed to write data to S3: {str(e)}.",
+                "message": f"<b>{environment} Address Book Error 🚨</b><br>Failed to write data to S3: {str(e)}.",
             },
         )
         raise Exception(f"Failed to write data to S3: {str(e)}")
@@ -170,7 +172,7 @@ def lambda_handler(event, context):
         webhook_url=azure_webhook_url,
         payload={
             "channel": channel_id,
-            "message": f"<b>Address Book</b><br>Successfully generated and stored address book data with a total of {len(user_to_email)} entries.",
+            "message": f"<b>{environment} Address Book</b><br>Successfully generated and stored address book data with a total of {len(user_to_email)} entries.",
         },
     )
 
