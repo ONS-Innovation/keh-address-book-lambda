@@ -1,9 +1,9 @@
 import pytest
 import github_services
-from fixtures import logger_spy, secret_manager_valid, secret_manager_empty
+from fixtures import logger_spy
 
 
-def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
+def test_github_services_valid(monkeypatch, logger_spy):
     """Ensures valid GitHubServices setup succeeds and logs nothing."""
 
     def fake_get_token_as_installation(org, pem, app_client_id):
@@ -47,37 +47,33 @@ def test_github_services_valid(monkeypatch, logger_spy, secret_manager_valid):
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
-        secret_manager=secret_manager_valid,
-        secret_name="test-secret",
-        app_client_id="12345",
+        github_client_id="12345",
+        github_private_key="FAKE_PEM_CONTENT",
     )
 
     assert isinstance(services.ql, FakeQL)
     assert logger_spy.all_calls == []
 
 
-def test_missing_secret(logger_spy, secret_manager_empty):
-    """Raises when secret is missing and logs an error."""
+def test_missing_private_key(logger_spy):
+    """Raises when the private key is missing and logs an error."""
 
     with pytest.raises(Exception) as exc:
         _ = github_services.GitHubServices(
             org="test-org",
             logger=logger_spy,
-            secret_manager=secret_manager_empty,
-            secret_name="test-secret",
-            app_client_id="12345",
+            github_client_id="12345",
+            github_private_key="",
         )
 
     msg = str(exc.value)
-    assert "Secret test-secret not found in AWS Secret Manager" in msg
+    assert "GitHub private key not found" in msg
 
     assert len(logger_spy.all_calls) == 1
-    assert (
-        "Secret test-secret not found in AWS Secret Manager" in logger_spy.all_calls[0]
-    )
+    assert "GitHub private key not found" in logger_spy.all_calls[0]
 
 
-def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
+def test_bad_token(monkeypatch, logger_spy):
     """Handles invalid token retrieval by raising and logging."""
 
     def fake_bad_token(org, pem, app_client_id):
@@ -94,9 +90,8 @@ def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
         _ = github_services.GitHubServices(
             org="test-org",
             logger=logger_spy,
-            secret_manager=secret_manager_valid,
-            secret_name="test-secret",
-            app_client_id="12345",
+            github_client_id="12345",
+            github_private_key="FAKE_PEM_CONTENT",
         )
 
     assert str(exc.value) == "failure"
@@ -106,7 +101,29 @@ def test_bad_token(monkeypatch, logger_spy, secret_manager_valid):
     )
 
 
-def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
+def test_non_tuple_access_token(monkeypatch, logger_spy):
+    """Rejects a non-tuple token returned by the access-token method."""
+    monkeypatch.setattr(
+        github_services.GitHubServices,
+        "get_access_token",
+        lambda self, github_client_id, github_private_key: "failure",
+    )
+
+    with pytest.raises(Exception, match="failure"):
+        github_services.GitHubServices(
+            org="test-org",
+            logger=logger_spy,
+            github_client_id="12345",
+            github_private_key="FAKE_PEM_CONTENT",
+        )
+
+    assert any(
+        "Failed to retrieve GitHub App installation token: failure" in message
+        for message in logger_spy.errors
+    )
+
+
+def test_get_all_user_details(monkeypatch, logger_spy):
     """Paginates members correctly."""
 
     monkeypatch.setattr(
@@ -178,9 +195,8 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
-        secret_manager=secret_manager_valid,
-        secret_name="test-secret",
-        app_client_id="12345",
+        github_client_id="12345",
+        github_private_key="FAKE_PEM_CONTENT",
     )
 
     user_to_email, email_to_user, user_to_id = services.get_all_user_details()
@@ -198,7 +214,7 @@ def test_get_all_user_details(monkeypatch, logger_spy, secret_manager_valid):
     assert logger_spy.all_calls == []
 
 
-def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
+def test_missing_email(monkeypatch, logger_spy):
     """Skips members with no verified domain emails."""
 
     monkeypatch.setattr(
@@ -240,9 +256,8 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
-        secret_manager=secret_manager_valid,
-        secret_name="test-secret",
-        app_client_id="12345",
+        github_client_id="12345",
+        github_private_key="FAKE_PEM_CONTENT",
     )
 
     user_to_email, email_to_user, user_to_id = services.get_all_user_details()
@@ -257,7 +272,7 @@ def test_missing_email(monkeypatch, logger_spy, secret_manager_valid):
     )
 
 
-def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
+def test_missing_username(monkeypatch, logger_spy):
     """Skips members with empty usernames."""
 
     monkeypatch.setattr(
@@ -300,9 +315,8 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
-        secret_manager=secret_manager_valid,
-        secret_name="test-secret",
-        app_client_id="12345",
+        github_client_id="12345",
+        github_private_key="FAKE_PEM_CONTENT",
     )
 
     user_to_email, email_to_user, user_to_id = services.get_all_user_details()
@@ -314,7 +328,7 @@ def test_missing_username(monkeypatch, logger_spy, secret_manager_valid):
     assert any("Skipping member with empty username" in m for m in logger_spy.all_calls)
 
 
-def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_valid):
+def test_get_all_user_details_no_org(monkeypatch, logger_spy):
     """Handles missing organisation in GraphQL response."""
 
     monkeypatch.setattr(
@@ -342,9 +356,8 @@ def test_get_all_user_details_no_org(monkeypatch, logger_spy, secret_manager_val
     services = github_services.GitHubServices(
         org="test-org",
         logger=logger_spy,
-        secret_manager=secret_manager_valid,
-        secret_name="secret",
-        app_client_id="12345",
+        github_client_id="12345",
+        github_private_key="FAKE_PEM_CONTENT",
     )
 
     result = services.get_all_user_details()

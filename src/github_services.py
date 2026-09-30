@@ -56,7 +56,9 @@ class GitHubServices:
             str: GitHub token.
         """
         if not github_private_key:
-            error_message = "GitHub private key not found. Please check your environment variables."
+            error_message = (
+                "GitHub private key not found. Please check your environment variables."
+            )
             self.logger.log_error(error_message)
             raise Exception(error_message)
 
