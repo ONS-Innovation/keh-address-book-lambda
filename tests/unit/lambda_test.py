@@ -1,15 +1,127 @@
 import json
-import os
-import builtins
 import pytest
 from lambda_function import lambda_handler
-from fixtures import set_env
+from fixtures import logger_spy, set_env
 
 
-def test_lambda_valid(monkeypatch):
+def _patch_aws_clients(monkeypatch, secret_overrides=None):
+    alert_calls = []
+
+    class FakeSecretsManager:
+        def get_secret_value(self, SecretId):
+            secrets = {
+                "github-client-id": '{"ClientID": "12345"}',
+                "github-private-key": "FAKE_PEM_CONTENT",
+                "alert-secret": json.dumps(
+                    {
+                        "azure_tenant_id": "tenant",
+                        "azure_client_id": "client",
+                        "azure_client_secret": "secret",
+                        "azure_webhook_url": "https://example.test/webhook",
+                        "channel_id": "channel",
+                    }
+                ),
+            }
+            secrets.update(secret_overrides or {})
+            return {"SecretString": secrets[SecretId]}
+
+    class FakeTeamsAlertClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def post_to_webhook(self, **kwargs):
+            alert_calls.append(kwargs)
+
+    monkeypatch.setattr(
+        "lambda_function.boto3.client",
+        lambda name: FakeSecretsManager() if name == "secretsmanager" else object(),
+    )
+    monkeypatch.setattr("lambda_function.TeamsAlertClient", FakeTeamsAlertClient)
+    return alert_calls
+
+
+def test_lambda_aws_client_failure(set_env, monkeypatch, logger_spy):
+    """Raises and logs when an AWS client cannot be created."""
+    monkeypatch.setattr(
+        "lambda_function.boto3.client",
+        lambda name: (_ for _ in ()).throw(RuntimeError("AWS unavailable")),
+    )
+    monkeypatch.setattr("lambda_function.wrapped_logging", lambda _: logger_spy)
+
+    with pytest.raises(Exception, match="Unable to retrieve Secret Manager"):
+        lambda_handler(event={}, context=None)
+
+    assert len(logger_spy.errors) == 1
+
+
+@pytest.mark.parametrize(
+    ("secret_name", "secret_value"),
+    (
+        ("github-client-id", '{"ClientID": ""}'),
+        ("github-private-key", ""),
+    ),
+)
+def test_lambda_missing_github_credential(
+    set_env, monkeypatch, secret_name, secret_value
+):
+    """Raises when either required GitHub credential is empty."""
+    _patch_aws_clients(monkeypatch, {secret_name: secret_value})
+
+    with pytest.raises(
+        Exception, match="GitHub Client ID or Private Key not found in Secrets Manager"
+    ):
+        lambda_handler(event={}, context=None)
+
+
+def test_lambda_missing_alert_secret_key(set_env, monkeypatch):
+    """Raises when the alert secret omits a required value."""
+    _patch_aws_clients(
+        monkeypatch,
+        {
+            "alert-secret": json.dumps(
+                {
+                    "azure_client_id": "client",
+                    "azure_client_secret": "secret",
+                    "azure_webhook_url": "https://example.test/webhook",
+                    "channel_id": "channel",
+                }
+            )
+        },
+    )
+    monkeypatch.setattr("lambda_function.GitHubServices", lambda *args: object())
+
+    with pytest.raises(
+        Exception, match="Missing required alert secret key: azure_tenant_id"
+    ):
+        lambda_handler(event={}, context=None)
+
+
+def test_lambda_handles_github_fetch_failure(set_env, monkeypatch):
+    """Notifies the alert channel and raises when GitHub data retrieval fails."""
+    alert_calls = _patch_aws_clients(monkeypatch)
+
+    class FailingServices:
+        def get_all_user_details(self):
+            raise RuntimeError("GitHub boom")
+
+    monkeypatch.setattr(
+        "lambda_function.GitHubServices", lambda *args: FailingServices()
+    )
+
+    with pytest.raises(
+        Exception, match="Failed to fetch data from GitHub: GitHub boom"
+    ):
+        lambda_handler(event={}, context=None)
+
+    assert len(alert_calls) == 1
+    assert alert_calls[0]["webhook_url"] == "https://example.test/webhook"
+    assert alert_calls[0]["payload"]["channel"] == "channel"
+    assert "GitHub boom" in alert_calls[0]["payload"]["message"]
+
+
+def test_lambda_valid(set_env, monkeypatch):
     """Processes a valid event, writes to S3, returns 200."""
-    # Ensure AWS clients are stubbed so handler doesn't raise early
-    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+    _patch_aws_clients(monkeypatch)
 
     class GitHubServices:
         def __init__(self):
@@ -59,27 +171,37 @@ def test_lambda_valid(monkeypatch):
         assert isinstance(parsed, dict)
 
 
-def test_lambda_missing_env_var(monkeypatch):
-    """Returns 500 when required environment variables are missing."""
-    for key in ("GITHUB_ORG", "AWS_SECRET_NAME", "GITHUB_APP_CLIENT_ID"):
-        if key in os.environ:
-            monkeypatch.delenv(key, raising=False)
-
-    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
-    monkeypatch.setattr("lambda_function.GitHubServices", lambda *a, **k: object())
-    monkeypatch.setattr("lambda_function.S3Writer", lambda *a, **k: object())
-
-    from lambda_function import lambda_handler
+@pytest.mark.parametrize(
+    "missing_variable",
+    (
+        "GITHUB_ORG",
+        "S3_BUCKET_NAME",
+        "GITHUB_CLIENT_ID_SECRET_NAME",
+        "GITHUB_PRIVATE_KEY_SECRET_NAME",
+        "ALERT_SECRET_NAME",
+    ),
+)
+def test_lambda_missing_env_var(monkeypatch, missing_variable):
+    """Raises when any required environment variable is missing."""
+    for variable in (
+        "GITHUB_ORG",
+        "S3_BUCKET_NAME",
+        "GITHUB_CLIENT_ID_SECRET_NAME",
+        "GITHUB_PRIVATE_KEY_SECRET_NAME",
+        "ALERT_SECRET_NAME",
+    ):
+        monkeypatch.setenv(variable, "test-value")
+    monkeypatch.delenv(missing_variable)
 
     with pytest.raises(Exception) as excinfo:
         lambda_handler(event={}, context=None)
 
-    assert "Failed to fetch data from GitHub" in str(excinfo.value)
+    assert f"{missing_variable} environment variable not set" == str(excinfo.value)
 
 
 def test_lambda_handles_org_not_found(set_env, monkeypatch):
     """Returns 404 when the organisation cannot be found."""
-    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+    _patch_aws_clients(monkeypatch)
 
     class FakeServices:
         def __init__(self, *args, **kwargs):
@@ -110,7 +232,7 @@ def test_lambda_handles_org_not_found(set_env, monkeypatch):
 
 def test_lambda_handles_s3_write_failure(set_env, monkeypatch):
     """Returns 500 when S3 write fails and message is logged."""
-    monkeypatch.setattr("lambda_function.boto3.client", lambda name: object())
+    _patch_aws_clients(monkeypatch)
 
     class FakeServices:
         def __init__(self, *args, **kwargs):

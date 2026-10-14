@@ -7,9 +7,8 @@ class GitHubServices:
         self,
         org: str,
         logger: Any,
-        secret_manager: Any,
-        secret_name: str,
-        app_client_id: str,
+        github_client_id: str,
+        github_private_key: str,
     ):
         """
         Initialises the GitHub Services Class
@@ -20,15 +19,14 @@ class GitHubServices:
         Args:
             org - Organisation name
             logger - The Lambda functions logger
-            secret_manager - The S3 secrets manager
-            secret_name - Secret name for AWS
-            app_client_id - GitHub App Client ID
+            github_client_id - GitHub Client ID
+            github_private_key - GitHub Private Key
         """
 
         self.org = org
         self.logger = logger
 
-        token = self.get_access_token(secret_manager, secret_name, app_client_id)
+        token = self.get_access_token(github_client_id, github_private_key)
 
         # Ensure we have a valid token tuple before proceeding
         if not isinstance(token, tuple):
@@ -42,33 +40,30 @@ class GitHubServices:
         self.ql = github_api_toolkit.github_graphql_interface(access_token)
 
     def get_access_token(
-        self, secret_manager: Any, secret_name: str, app_client_id: str
+        self, github_client_id: str, github_private_key: str
     ) -> Tuple[str, str]:
-        """Gets the access token from the AWS Secret Manager.
+        """Gets the access token for the GitHub App installation.
 
         Args:
-            secret_manager (Any): The Boto3 Secret Manager client.
-            secret_name (str): The name of the secret to get.
-            app_client_id (str): The client ID of the GitHub App.
+            github_client_id (str): The GitHub Client ID.
+            github_private_key (str): The GitHub Private Key.
 
         Raises:
             Exception: If the secret is not found in the Secret Manager.
             Exception: if GitHub app installation token is not found
 
         Returns:
-            str: GitHub token.
+            Tuple[str, str]: GitHub token and its expiration time.
         """
-        response = secret_manager.get_secret_value(SecretId=secret_name)
-
-        pem_contents = response.get("SecretString", "")
-
-        if not pem_contents:
-            error_message = f"Secret {secret_name} not found in AWS Secret Manager. Please check your environment variables."
+        if not github_private_key:
+            error_message = (
+                "GitHub private key not found. Please check your environment variables."
+            )
             self.logger.log_error(error_message)
             raise Exception(error_message)
 
         token = github_api_toolkit.get_token_as_installation(
-            self.org, pem_contents, app_client_id
+            self.org, github_private_key, github_client_id
         )
 
         if not isinstance(token, tuple):

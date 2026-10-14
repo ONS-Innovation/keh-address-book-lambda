@@ -4,7 +4,7 @@ Encapsulates interactions with the GitHub GraphQL API using `github_api_toolkit`
 
 ## Overview
 
-- Retrieves a GitHub App installation token via AWS Secrets Manager (`AWS_SECRET_NAME`) and the provided `GITHUB_APP_CLIENT_ID`.
+- Receives the GitHub client ID and private key from the Lambda handler and uses them to retrieve a GitHub App installation token. Secret Manager access and secret parsing are handled by the handler.
 - Builds a GraphQL client interface for requests.
 - Provides `get_all_user_details()` which returns:
   - `user_to_email`: username → list of verified org emails
@@ -15,19 +15,16 @@ Encapsulates interactions with the GitHub GraphQL API using `github_api_toolkit`
 ## Quick Start
 
 ```python
-import boto3
 from github_services import GitHubServices
 from logger import wrapped_logging
 
 logger = wrapped_logging(False)
-sm = boto3.client("secretsmanager")
 
 svc = GitHubServices(
  org="<org>",
  logger=logger,
- secret_manager=sm,
- secret_name="<aws_secret_name>",
- app_client_id="<github_app_client_id>",
+ github_client_id="<github_client_id>",
+ github_private_key="<github_private_key_pem>",
 )
 
 result = svc.get_all_user_details()

@@ -21,10 +21,11 @@ COPY pyproject.toml poetry.lock ${LAMBDA_TASK_ROOT}/
 
 # Install the dependencies
 WORKDIR ${LAMBDA_TASK_ROOT}
-RUN pip install --no-cache-dir poetry==1.8.3 && \
-	poetry config virtualenvs.create false && \
-	poetry lock --no-update --no-interaction || poetry lock --no-interaction && \
-	poetry install --no-root --without dev --no-interaction
+
+RUN pip install --no-cache-dir poetry==2.5.1 && \
+    poetry config virtualenvs.create false && \
+    poetry lock --no-update --no-interaction || poetry lock --no-interaction && \
+    poetry install --no-root --without dev --no-interaction
 
 # Copy function code to task root so top-level imports work
 COPY src/ ${LAMBDA_TASK_ROOT}/
